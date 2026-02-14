@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "483302429215",
+    "project_id": "healthkriya-4b99c",
+    "storage_bucket": "healthkriya-4b99c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483302429215:android:a29a87ac5b0b1ff9babb2a",
+        "android_client_info": {
+          "package_name": "com.kunal.healthkriya"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTa24nc333p3AjSAfFXDgIAeb7743vyqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

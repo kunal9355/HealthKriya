@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Background Circle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+            M256,0
+            C114.6,0 0,114.6 0,256
+            C0,397.4 114.6,512 256,512
+            C397.4,512 512,397.4 512,256
+            C512,114.6 397.4,0 256,0 Z" />
+
+    <!-- Heart Shape -->
+    <path
+        android:fillColor="#2CB9B0"
+        android:pathData="
+            M256,384
+            L128,256
+            C64,192 96,96 192,96
+            C224,96 256,128 256,128
+            C256,128 288,96 320,96
+            C416,96 448,192 384,256
+            Z" />
+
+    <!-- Medical Plus -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+            M240,176
+            H272
+            V240
+            H336
+            V272
+            H272
+            V336
+            H240
+            V272
+            H176
+            V240
+            H240
+            Z" />
+</vector>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/health_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/txtGreeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hi 👋"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/health_text_primary"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:columnCount="2"
+            android:rowCount="2"
+            android:alignmentMode="alignMargins"
+            android:useDefaultMargins="true">
+
+            <include
+                android:id="@+id/cardMood"
+                layout="@layout/item_home_card"/>
+
+            <include
+                android:id="@+id/cardMedicine"
+                layout="@layout/item_home_card"/>
+
+            <include
+                android:id="@+id/cardDonate"
+                layout="@layout/item_home_card"/>
+
+            <include
+                android:id="@+id/cardEmergency"
+                layout="@layout/item_home_card"/>
+
+        </GridLayout>
+
+    </LinearLayout>
+</ScrollView>
