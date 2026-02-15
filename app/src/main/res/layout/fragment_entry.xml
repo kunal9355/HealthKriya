@@ -5,7 +5,7 @@
     app:cardCornerRadius="24dp"
     app:cardElevation="10dp"
     app:cardUseCompatPadding="true"
-    app:cardBackgroundColor="@color/health_t_secondary"
+    app:cardBackgroundColor="@color/health_surface"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
