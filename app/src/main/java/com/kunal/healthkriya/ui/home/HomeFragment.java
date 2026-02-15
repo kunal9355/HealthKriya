@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.model.home.HomeDataModel;
 import com.kunal.healthkriya.ui.mood.MoodContainerActivity;
+import com.kunal.healthkriya.ui.mood.MoodHubActivity;
 
 public class HomeFragment extends Fragment {
 
@@ -76,7 +77,7 @@ public class HomeFragment extends Fragment {
 
     private void setupClicks() {
         cardMood.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), MoodContainerActivity.class);
+            Intent intent = new Intent(requireContext(), MoodHubActivity.class);
             startActivity(intent);
         });
         cardMedicine.setOnClickListener(v -> showTemp("Medicine"));
