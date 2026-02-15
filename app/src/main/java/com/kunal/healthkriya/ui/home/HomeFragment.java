@@ -2,16 +2,19 @@ package com.kunal.healthkriya.ui.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.model.home.HomeDataModel;
@@ -21,7 +24,8 @@ public class HomeFragment extends Fragment {
     private HomeViewModel viewModel;
 
     private TextView txtGreeting;
-    private CardView cardMood, cardMedicine, cardDonate, cardEmergency;
+    private View cardMood, cardMedicine, cardDonate, cardEmergency;
+    private ScrollView homeScroll;
 
     @Nullable
     @Override
@@ -44,9 +48,17 @@ public class HomeFragment extends Fragment {
         cardMedicine = view.findViewById(R.id.cardMedicine);
         cardDonate = view.findViewById(R.id.cardDonate);
         cardEmergency = view.findViewById(R.id.cardEmergency);
+        homeScroll = view.findViewById(R.id.homeScroll);
 
         observeData();
         setupClicks();
+        setupScrollListener();
+        
+        // Attach animations
+        attachCardAnimation(cardMood);
+        attachCardAnimation(cardMedicine);
+        attachCardAnimation(cardDonate);
+        attachCardAnimation(cardEmergency);
     }
 
     private void observeData() {
@@ -61,29 +73,46 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupClicks() {
+        cardMood.setOnClickListener(v -> showTemp("Mood Tracker"));
+        cardMedicine.setOnClickListener(v -> showTemp("Medicine"));
+        cardDonate.setOnClickListener(v -> showTemp("Donate / Request"));
+        cardEmergency.setOnClickListener(v -> showTemp("Emergency"));
+    }
 
-        cardMood.setOnClickListener(v ->
-                // 🔮 Future navigation
-                // NavHostFragment.findNavController(this)
-                //        .navigate(R.id.action_home_to_mood);
-                showTemp("Mood Tracker")
-        );
+    private void setupScrollListener() {
+        if (homeScroll == null) return;
 
-        cardMedicine.setOnClickListener(v ->
-                showTemp("Medicine")
-        );
+        View bottomNavContainer = getActivity() != null ? getActivity().findViewById(R.id.bottomNavContainer) : null;
+        if (bottomNavContainer == null) return;
 
-        cardDonate.setOnClickListener(v ->
-                showTemp("Donate / Request")
-        );
-
-        cardEmergency.setOnClickListener(v ->
-                showTemp("Emergency")
-        );
+        homeScroll.setOnScrollChangeListener((v, scrollX, scrollY, oldX, oldY) -> {
+            if (scrollY > oldY + 10) { // Scrolling down
+                bottomNavContainer.animate()
+                        .translationY(bottomNavContainer.getHeight() + 100)
+                        .setDuration(300)
+                        .start();
+            } else if (scrollY < oldY - 10) { // Scrolling up
+                bottomNavContainer.animate()
+                        .translationY(0)
+                        .setDuration(300)
+                        .start();
+            }
+        });
     }
 
     private void showTemp(String msg) {
-        android.widget.Toast.makeText(requireContext(),
-                msg + " clicked", android.widget.Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), msg + " clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    private void attachCardAnimation(View card) {
+        if (card == null) return;
+        card.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                v.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.card_press));
+            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                v.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.card_release));
+            }
+            return false;
+        });
     }
 }

@@ -2,6 +2,7 @@ package com.kunal.healthkriya;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -26,6 +27,19 @@ public class MainActivity extends AppCompatActivity {
 
             BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
             NavigationUI.setupWithNavController(bottomNav, navController);
+
+            bottomNav.setOnItemSelectedListener(item -> {
+                View view = bottomNav.findViewById(item.getItemId());
+                if (view != null) {
+                    try {
+                        view.startAnimation(
+                                AnimationUtils.loadAnimation(this, R.anim.nav_pulse)
+                        );
+                    } catch (Exception ignored) {
+                    }
+                }
+                return NavigationUI.onNavDestinationSelected(item, navController);
+            });
 
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
                 int id = destination.getId();

@@ -1,14 +1,17 @@
 package com.kunal.healthkriya.ui.profile;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -16,7 +19,6 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.kunal.healthkriya.R;
-import com.kunal.healthkriya.data.model.UserModel;
 
 public class ProfileFragment extends Fragment {
 
@@ -27,6 +29,7 @@ public class ProfileFragment extends Fragment {
 
     // Rows
     private View rowChangePassword, rowMedical, rowEmergency, rowLogout;
+    private Switch themeSwitch;
 
     @Nullable
     @Override
@@ -49,14 +52,16 @@ public class ProfileFragment extends Fragment {
         txtEmail = view.findViewById(R.id.txtEmail);
         txtPhone = view.findViewById(R.id.txtPhone);
 
-        // Rows (assign IDs in XML)
+        // Rows
         rowChangePassword = view.findViewById(R.id.rowChangePassword);
         rowMedical = view.findViewById(R.id.rowMedical);
         rowEmergency = view.findViewById(R.id.rowEmergency);
         rowLogout = view.findViewById(R.id.rowLogout);
+        themeSwitch = view.findViewById(R.id.switchTheme);
 
         observeUser();
         setupClicks();
+        setupThemeSwitch();
     }
 
     private void observeUser() {
@@ -70,7 +75,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupClicks() {
-
         rowChangePassword.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profile_to_changePassword)
@@ -93,6 +97,26 @@ public class ProfileFragment extends Fragment {
                     .setPopUpTo(R.id.nav_graph, true)
                     .build();
             navController.navigate(R.id.authFragment, null, options);
+        });
+    }
+
+    private void setupThemeSwitch() {
+        if (getContext() == null) return;
+
+        SharedPreferences prefs =
+                requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+
+        boolean isDark = prefs.getBoolean("dark_mode", false);
+        themeSwitch.setChecked(isDark);
+
+        themeSwitch.setOnCheckedChangeListener((buttonView, checked) -> {
+            prefs.edit().putBoolean("dark_mode", checked).apply();
+
+            AppCompatDelegate.setDefaultNightMode(
+                    checked
+                            ? AppCompatDelegate.MODE_NIGHT_YES
+                            : AppCompatDelegate.MODE_NIGHT_NO
+            );
         });
     }
 }
