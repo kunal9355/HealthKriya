@@ -62,12 +62,17 @@
                 android:textSize="16sp"
                 android:textStyle="bold"/>
 
-            <HorizontalScrollView
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCalendar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never">
+                android:layout_height="90dp"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/txtTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                <LinearLayout
+            <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -93,7 +98,7 @@
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/bg_date_normal"/>
                 </LinearLayout>
-            </HorizontalScrollView>
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
