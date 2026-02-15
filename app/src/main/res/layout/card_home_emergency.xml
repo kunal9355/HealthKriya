@@ -7,7 +7,7 @@
     app:cardCornerRadius="22dp"
     app:cardElevation="10dp"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="#22FF3B3B">
+    app:cardBackgroundColor="@color/emergency_card_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:layout_height="36dp"
             android:src="@drawable/ic_emergency"
             android:contentDescription="Emergency Icon"
-            app:tint="#FF3B3B" />
+            app:tint="@color/emergency_text" />
 
         <TextView
             android:id="@+id/txtEmergencyTitle"
@@ -31,7 +31,7 @@
             android:text="Emergency"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#FF3B3B"
+            android:textColor="@color/emergency_text"
             android:layout_marginTop="10dp"/>
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:text="SOS and Help"
             android:textSize="13sp"
-            android:textColor="#AAFF3B3B"/>
+            android:textColor="@color/emergency_subtext"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -7,7 +7,7 @@
     app:cardCornerRadius="22dp"
     app:cardElevation="10dp"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="#2227AE60">
+    app:cardBackgroundColor="@color/donate_card_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:layout_height="36dp"
             android:src="@drawable/ic_donate"
             android:contentDescription="Donate Icon"
-            app:tint="#27AE60" />
+            app:tint="@color/donate_text" />
 
         <TextView
             android:id="@+id/txtDonateTitle"
@@ -31,7 +31,7 @@
             android:text="Donate"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#27AE60"
+            android:textColor="@color/donate_text"
             android:layout_marginTop="10dp"/>
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:text="Blood / Medicine"
             android:textSize="13sp"
-            android:textColor="#AA27AE60"/>
+            android:textColor="@color/donate_subtext"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

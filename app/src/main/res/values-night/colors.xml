@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App chrome (dark mode) -->
+    <color name="health_background">#0F1514</color>
+    <color name="health_surface">#1A2220</color>
+    <color name="bottom_nav_bg">#16201E</color>
+    <color name="status_bar">#0B1110</color>
+
+    <!-- Text & icons -->
+    <color name="health_text_primary">#E8F0EB</color>
+    <color name="health_text_secondary">#A8B4AE</color>
+    <color name="health_text_hint">#8A9690</color>
+    <color name="health_icon">#A8B4AE</color>
+    <color name="health_icon_muted">#8A9690</color>
+
+    <!-- Compatibility aliases -->
+    <color name="bgLight">#0F1514</color>
+    <color name="health_t_secondary">#1A2220</color>
+
+    <!-- Home cards -->
+    <color name="home_glass_card_bg">#1F2B29</color>
+    <color name="donate_card_bg">#173026</color>
+    <color name="donate_text">#69D39B</color>
+    <color name="donate_subtext">#9ED9BB</color>
+    <color name="emergency_card_bg">#371E22</color>
+    <color name="emergency_text">#FF7D7D</color>
+    <color name="emergency_subtext">#D9A2A8</color>
+
+    <!-- Mood hub -->
+    <color name="mood_hub_bg">#0F1514</color>
+    <color name="mood_hub_card_bg">#1A2220</color>
+    <color name="mood_hub_hint_text">#A9B3B0</color>
+    <color name="mood_option_title">#E3ECE8</color>
+    <color name="mood_option_arrow">#91A29A</color>
+    <color name="date_chip_bg">#1F2A28</color>
+    <color name="date_chip_stroke">#3A4744</color>
+    <color name="date_chip_selected_bg">#335B78</color>
+
+    <!-- Auth -->
+    <color name="auth_screen_bg">#0F1514</color>
+    <color name="auth_top_bg">#165A56</color>
+    <color name="auth_card_bg">#1A2220</color>
+    <color name="auth_title_text">#E8F0EB</color>
+    <color name="auth_subtitle_text">#C6DCD6</color>
+    <color name="auth_link_text">#7FD6BF</color>
+    <color name="auth_input_bg">#24302D</color>
+</resources>
