@@ -5,14 +5,13 @@ plugins {
 
 android {
     namespace = "com.kunal.healthkriya"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
+    // Adjusted to a stable API level
 
     defaultConfig {
         applicationId = "com.kunal.healthkriya"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35 // API 36 is experimental/future; 35 is stable Android 15
         versionCode = 1
         versionName = "1.0"
 
@@ -39,17 +38,16 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(libs.firebase.auth)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
-    implementation(libs.firebase.firestore)
+
+    // Firebase BoM (Bill of Materials) - manages versions for all firebase libs
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-analytics")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    implementation("com.google.firebase:firebase-analytics")
-    implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
-    implementation ("com.google.firebase:firebase-auth")
-    implementation ("com.google.firebase:firebase-firestore")
-
 }
