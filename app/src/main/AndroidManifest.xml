@@ -23,6 +23,10 @@
         android:theme="@style/Theme.HealthKriya">
 
         <activity
+            android:name=".ui.mood.MoodHubActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.mood.MoodContainerActivity"
             android:exported="false" />
 

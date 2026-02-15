@@ -18,6 +18,10 @@ public class MoodContainerActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         ViewPager2 viewPager = findViewById(R.id.viewPager);
 
+        int startTab = getIntent().getIntExtra("START_TAB", 0);
+        viewPager.setCurrentItem(startTab, false);
+
+
         MoodPagerAdapter adapter = new MoodPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
