@@ -1,5 +1,6 @@
 package com.kunal.healthkriya.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.model.home.HomeDataModel;
+import com.kunal.healthkriya.ui.mood.MoodContainerActivity;
 
 public class HomeFragment extends Fragment {
 
@@ -73,7 +75,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupClicks() {
-        cardMood.setOnClickListener(v -> showTemp("Mood Tracker"));
+        cardMood.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), MoodContainerActivity.class);
+            startActivity(intent);
+        });
         cardMedicine.setOnClickListener(v -> showTemp("Medicine"));
         cardDonate.setOnClickListener(v -> showTemp("Donate / Request"));
         cardEmergency.setOnClickListener(v -> showTemp("Emergency"));
