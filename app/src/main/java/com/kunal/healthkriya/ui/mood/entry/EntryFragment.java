@@ -52,6 +52,20 @@ public class EntryFragment extends Fragment {
                 Toast.makeText(getContext(), "Mood Saved (dummy)", Toast.LENGTH_SHORT).show()
         );
 
+        String selectedDate = null;
+        if (getArguments() != null) {
+            selectedDate = getArguments().getString("SELECTED_DATE");
+        }
+
+        TextView txtDate = view.findViewById(R.id.txtSelectedDate);
+        if (selectedDate != null && !selectedDate.isEmpty()) {
+            txtDate.setText("Date: " + selectedDate);
+        } else {
+            txtDate.setText("Date: Not selected");
+        }
+
+
+
         return view;
     }
 

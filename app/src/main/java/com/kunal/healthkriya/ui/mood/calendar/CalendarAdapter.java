@@ -12,14 +12,26 @@ import com.kunal.healthkriya.R;
 
 import java.util.List;
 
+
+
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DateViewHolder> {
 
     private final List<CalendarDateModel> list;
+    private final OnDateSelectListener listener;
+
     private int selectedPosition = 0;
 
-    public CalendarAdapter(List<CalendarDateModel> list) {
-        this.list = list;
+    public interface OnDateSelectListener {
+        void onDateSelected(String fullDate);
     }
+
+
+    public CalendarAdapter(List<CalendarDateModel> list,
+                           OnDateSelectListener listener) {
+        this.list = list;
+        this.listener = listener;
+    }
+
 
     @NonNull
     @Override
@@ -44,7 +56,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DateVi
             selectedPosition = position;
             list.get(selectedPosition).isSelected = true;
             notifyDataSetChanged();
+
+            listener.onDateSelected(model.fullDate);
         });
+
     }
 
     @Override

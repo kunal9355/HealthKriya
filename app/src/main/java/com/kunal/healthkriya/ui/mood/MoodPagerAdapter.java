@@ -1,5 +1,7 @@
 package com.kunal.healthkriya.ui.mood;
 
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -11,16 +13,27 @@ import com.kunal.healthkriya.ui.mood.analytics.AnalyticsFragment;
 
 public class MoodPagerAdapter extends FragmentStateAdapter {
 
-    public MoodPagerAdapter(@NonNull FragmentActivity fa) {
+
+
+    private final Bundle bundle;
+
+    public MoodPagerAdapter(@NonNull FragmentActivity fa, Bundle bundle) {
         super(fa);
+        this.bundle = bundle;
     }
+
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        if (position == 0) return new EntryFragment();
-        if (position == 1) return new JournalFragment();
-        return new AnalyticsFragment();
+        Fragment fragment;
+        if (position == 0) fragment = new EntryFragment();
+        else if (position == 1) fragment = new JournalFragment();
+        else fragment = new AnalyticsFragment();
+
+        fragment.setArguments(bundle);
+        return fragment;
+
     }
 
     @Override

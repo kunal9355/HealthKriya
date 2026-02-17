@@ -18,6 +18,8 @@ public class MoodContainerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mood_container);
 
         int startTab = getIntent().getIntExtra("START_TAB", 0);
+        String selectedDate = getIntent().getStringExtra("SELECTED_DATE");
+
         Fragment fragment;
         if (startTab == 1) {
             fragment = new JournalFragment();
@@ -26,6 +28,10 @@ public class MoodContainerActivity extends AppCompatActivity {
         } else {
             fragment = new EntryFragment();
         }
+
+        Bundle bundle = new Bundle();
+        bundle.putString("SELECTED_DATE", selectedDate);
+        fragment.setArguments(bundle);
 
         getSupportFragmentManager()
                 .beginTransaction()
