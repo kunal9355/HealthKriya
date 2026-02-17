@@ -25,6 +25,15 @@
             android:textStyle="bold"
             android:textColor="@color/health_text_primary" />
 
+        <TextView
+            android:id="@+id/txtSelectedDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Date: Not selected"
+            android:textColor="@color/health_text_secondary"
+            android:textSize="13sp" />
+
         <!-- Emoji Row -->
 
         <LinearLayout

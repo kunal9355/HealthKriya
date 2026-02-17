@@ -16,8 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class MoodHubActivity extends AppCompatActivity {
+
+
+    private String selectedDate; // yyyy-MM-dd
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +40,9 @@ public class MoodHubActivity extends AppCompatActivity {
         TextView txtAnalytics = findViewById(R.id.cardAnalytics).findViewById(R.id.txtTitle);
         txtAnalytics.setText("Mood Analysis");
 
-        findViewById(R.id.cardEntry).setOnClickListener(v -> openMoodContainer(0));
-        findViewById(R.id.cardJournal).setOnClickListener(v -> openMoodContainer(1));
-        findViewById(R.id.cardAnalytics).setOnClickListener(v -> openMoodContainer(2));
+        findViewById(R.id.cardEntry).setOnClickListener(v -> openMoodContainer(0,selectedDate));
+        findViewById(R.id.cardJournal).setOnClickListener(v -> openMoodContainer(1,selectedDate));
+        findViewById(R.id.cardAnalytics).setOnClickListener(v -> openMoodContainer(2,selectedDate));
 
 
         RecyclerView rvCalendar = findViewById(R.id.rvCalendar);
@@ -49,25 +53,42 @@ public class MoodHubActivity extends AppCompatActivity {
         List<CalendarDateModel> calendarList = new ArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd", Locale.getDefault());
+        SimpleDateFormat fullFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
+
+        TextView txtMonth = findViewById(R.id.txtMonth);
+        txtMonth.setText(monthFormat.format(calendar.getTime()));
 
         for (int i = 0; i < 14; i++) {
-            String day = dayFormat.format(calendar.getTime());
-            String date = dateFormat.format(calendar.getTime());
-            calendarList.add(new CalendarDateModel(day, date, i == 0));
+            calendarList.add(
+                    new CalendarDateModel(
+                            dayFormat.format(calendar.getTime()),
+                            dateFormat.format(calendar.getTime()),
+                            fullFormat.format(calendar.getTime()),
+                            i == 0
+                    )
+            );
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        CalendarAdapter adapter = new CalendarAdapter(calendarList);
+        CalendarAdapter adapter = new CalendarAdapter(calendarList,
+                date -> selectedDate = date);
+
         rvCalendar.setAdapter(adapter);
 
+        // default selected
+        selectedDate = calendarList.get(0).fullDate;
+
 
     }
 
-    private void openMoodContainer(int startTab) {
+    private void openMoodContainer(int startTab, String date) {
         Intent intent = new Intent(this, MoodContainerActivity.class);
         intent.putExtra("START_TAB", startTab);
+        intent.putExtra("SELECTED_DATE", date);
         startActivity(intent);
     }
+
 }
