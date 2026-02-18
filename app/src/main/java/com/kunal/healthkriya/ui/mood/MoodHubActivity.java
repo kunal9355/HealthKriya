@@ -26,6 +26,12 @@ public class MoodHubActivity extends AppCompatActivity {
 
 
     private String selectedDate; // yyyy-MM-dd
+    private MoodRepository repository;
+    private final List<CalendarDateModel> calendarList = new ArrayList<>();
+    private CalendarAdapter adapter;
+    private SimpleDateFormat dayFormat;
+    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat fullFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +50,7 @@ public class MoodHubActivity extends AppCompatActivity {
         TextView txtAnalytics = findViewById(R.id.cardAnalytics).findViewById(R.id.txtTitle);
         txtAnalytics.setText("Mood Analysis");
 
-        MoodRepository repository = new MoodRepository(this);
+        repository = new MoodRepository(this);
 
 
         findViewById(R.id.cardEntry).setOnClickListener(v -> openMoodContainer(0,selectedDate));
@@ -57,20 +63,31 @@ public class MoodHubActivity extends AppCompatActivity {
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         );
 
-        List<CalendarDateModel> calendarList = new ArrayList<>();
-        CalendarAdapter adapter = new CalendarAdapter(calendarList,
+        adapter = new CalendarAdapter(calendarList,
                 date -> selectedDate = date);
         rvCalendar.setAdapter(adapter);
 
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.getDefault());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd", Locale.getDefault());
-        SimpleDateFormat fullFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        dayFormat = new SimpleDateFormat("EEE", Locale.getDefault());
+        dateFormat = new SimpleDateFormat("dd", Locale.getDefault());
+        fullFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
         selectedDate = fullFormat.format(calendar.getTime());
 
         TextView txtMonth = findViewById(R.id.txtMonth);
         txtMonth.setText(monthFormat.format(calendar.getTime()));
+
+        loadCalendarDates();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadCalendarDates();
+    }
+
+    private void loadCalendarDates() {
+        if (repository == null || adapter == null || fullFormat == null) return;
 
         repository.getAllMoods(moods -> {
 
@@ -81,30 +98,40 @@ public class MoodHubActivity extends AppCompatActivity {
 
             List<CalendarDateModel> generatedDates = new ArrayList<>();
             Calendar tempCalendar = Calendar.getInstance();
+            String targetDate = selectedDate;
+            if (targetDate == null || targetDate.isEmpty()) {
+                targetDate = fullFormat.format(tempCalendar.getTime());
+            }
+            boolean hasSelected = false;
 
             for (int i = 0; i < 14; i++) {
-                String fullDate = fullFormat.format(tempCalendar.getTime());
+                String dateValue = fullFormat.format(tempCalendar.getTime());
+                boolean isSelected = dateValue.equals(targetDate);
+                if (isSelected) hasSelected = true;
 
                 generatedDates.add(
                         new CalendarDateModel(
                                 dayFormat.format(tempCalendar.getTime()),
                                 dateFormat.format(tempCalendar.getTime()),
-                                fullDate,
-                                i == 0,
-                                moodMap.get(fullDate) // null if not present
+                                dateValue,
+                                isSelected,
+                                moodMap.get(dateValue) // null if not present
                         )
                 );
                 tempCalendar.add(Calendar.DAY_OF_MONTH, 1);
             }
 
+            if (!hasSelected && !generatedDates.isEmpty()) {
+                generatedDates.get(0).isSelected = true;
+                targetDate = generatedDates.get(0).fullDate;
+            }
+            String finalTargetDate = targetDate;
+
             runOnUiThread(() -> {
                 calendarList.clear();
                 calendarList.addAll(generatedDates);
                 adapter.notifyDataSetChanged();
-
-                if (!calendarList.isEmpty()) {
-                    selectedDate = calendarList.get(0).fullDate;
-                }
+                selectedDate = finalTargetDate;
             });
         });
 

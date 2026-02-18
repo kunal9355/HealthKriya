@@ -10,10 +10,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="567dp"
         android:orientation="vertical"
         android:padding="20dp">
 
@@ -32,14 +31,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Aaj ka mood kaisa hai?"
+            android:textColor="@color/health_text_primary"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/health_text_primary" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtSelectedDate"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="29dp"
             android:layout_marginTop="6dp"
             android:text="Date: Not selected"
             android:textColor="@color/health_text_secondary"
@@ -50,7 +49,7 @@
         <LinearLayout
             android:id="@+id/emojiRow"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:orientation="horizontal">
@@ -60,67 +59,88 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_margin="8dp"
-                android:padding="6dp"
+                android:alpha="0.6"
                 android:background="@drawable/bg_emoji_normal"
-                android:src="@drawable/ic_mood_angry"
-                android:alpha="0.6"/>
+                android:padding="6dp"
+                android:src="@drawable/ic_mood_angry" />
 
             <ImageView
                 android:id="@+id/emojiSad"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_margin="8dp"
-                android:src="@drawable/ic_mood_sad"
+                android:alpha="0.6"
                 android:background="@drawable/bg_emoji_normal"
-                android:alpha="0.6"/>
+                android:src="@drawable/ic_mood_sad" />
 
             <ImageView
                 android:id="@+id/emojiNeutral"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:layout_margin="8dp"
-                android:src="@drawable/ic_mood_neutral"
+                android:alpha="0.6"
                 android:background="@drawable/bg_emoji_normal"
-                android:alpha="0.6"/>
+                android:src="@drawable/ic_mood_neutral" />
 
             <ImageView
                 android:id="@+id/emojiHappy"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:layout_margin="8dp"
-                android:src="@drawable/ic_mood_happy"
+                android:alpha="0.6"
                 android:background="@drawable/bg_emoji_normal"
-                android:alpha="0.6"/>
+                android:src="@drawable/ic_mood_happy" />
 
             <ImageView
                 android:id="@+id/emojiVeryHappy"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:layout_margin="8dp"
-                android:src="@drawable/ic_mood_very_happy"
+                android:alpha="0.6"
                 android:background="@drawable/bg_emoji_normal"
-                android:alpha="0.6"/>
+                android:src="@drawable/ic_mood_very_happy" />
 
         </LinearLayout>
 
         <!-- Note -->
+
+        <!-- Save Button -->
         <EditText
             android:id="@+id/etNote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:hint="Kuch likhna chahte ho? (optional)"
-            android:backgroundTint="@color/health_primary" />
+            android:backgroundTint="@color/health_primary"
+            android:hint="Kuch likhna chahte ho? (optional)" />
 
-        <!-- Save Button -->
         <Button
             android:id="@+id/btnSaveMood"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="28dp"
-            android:text="Save Mood"
+            android:backgroundTint="@color/health_primary"
             android:enabled="false"
-            android:backgroundTint="@color/health_primary" />
+            android:text="Save Mood" />
+
+        <TextView
+            android:id="@+id/txtEntryHistoryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginTop="20dp"
+            android:text="Date-wise entries"
+            android:textColor="@color/health_text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtEntryHistory"
+            android:layout_width="match_parent"
+            android:layout_height="103dp"
+            android:layout_marginTop="8dp"
+            android:maxLines="8"
+            android:text="No entries yet"
+            android:textColor="@color/health_text_secondary"
+            android:textSize="13sp" />
 
     </LinearLayout>
 

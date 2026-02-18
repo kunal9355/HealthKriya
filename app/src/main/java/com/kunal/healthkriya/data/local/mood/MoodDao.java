@@ -31,4 +31,7 @@ public interface MoodDao {
     @Query("SELECT date FROM mood_table WHERE date <= :today ORDER BY date DESC")
     List<String> getMoodDatesUntil(String today);
 
+    @Query("SELECT * FROM mood_table WHERE date = :date LIMIT 1")
+    MoodEntity getMoodByDateSync(String date);
+
 }
