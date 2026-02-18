@@ -18,6 +18,8 @@ import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.local.mood.MoodEntity;
 import com.kunal.healthkriya.data.repository.MoodRepository;
 
+import java.util.List;
+
 public class EntryFragment extends Fragment {
 
     private MoodRepository repository;
@@ -26,7 +28,7 @@ public class EntryFragment extends Fragment {
     private EditText etNote;
     private ImageView selectedEmojiView;
     private ImageView emojiAngry, emojiSad, emojiNeutral, emojiHappy, emojiVeryHappy;
-    private TextView txtDate,txtStreak;
+    private TextView txtDate, txtStreak, txtEntryHistory;
 
     private boolean isUpdateMode = false;
     private String selectedDate;
@@ -49,8 +51,10 @@ public class EntryFragment extends Fragment {
         btnSaveMood = view.findViewById(R.id.btnSaveMood);
         txtDate = view.findViewById(R.id.txtSelectedDate);
         txtStreak = view.findViewById(R.id.txtStreak);
+        txtEntryHistory = view.findViewById(R.id.txtEntryHistory);
         repository = new MoodRepository(requireContext());
         refreshStreak();
+        loadEntryHistory();
 
         // Reset state
         isUpdateMode = false;
@@ -189,9 +193,6 @@ public class EntryFragment extends Fragment {
         );
     }
 
-
-
-
     private void saveMood() {
         if (selectedMood == -1) {
             Toast.makeText(getContext(), "Please select a mood", Toast.LENGTH_SHORT).show();
@@ -208,6 +209,7 @@ public class EntryFragment extends Fragment {
                 selectedMood,
                 etNote.getText().toString()
         );
+
         btnSaveMood.setEnabled(false);
         repository.saveMood(entity, (success, error) -> {
             if (!isAdded()) return;
@@ -218,6 +220,8 @@ public class EntryFragment extends Fragment {
                     btnSaveMood.setText("Update Mood");
                     Toast.makeText(getContext(), "Mood Saved", Toast.LENGTH_SHORT).show();
                     refreshStreak();
+                    loadEntryHistory();
+                    requireActivity().finish();
                 } else {
                     Toast.makeText(getContext(), "Save failed, please try again", Toast.LENGTH_SHORT).show();
                 }
@@ -234,6 +238,56 @@ public class EntryFragment extends Fragment {
                     txtStreak.setText("🔥 " + streak + " day streak")
             );
         });
+    }
+
+    private void loadEntryHistory() {
+        if (repository == null || txtEntryHistory == null) return;
+
+        repository.getAllMoods(this::renderEntryHistory);
+    }
+
+    private void renderEntryHistory(List<MoodEntity> moods) {
+        if (!isAdded()) return;
+
+        requireActivity().runOnUiThread(() -> {
+            if (moods == null || moods.isEmpty()) {
+                txtEntryHistory.setText("No entries yet");
+                return;
+            }
+
+            StringBuilder historyBuilder = new StringBuilder();
+            int shown = 0;
+            for (int i = moods.size() - 1; i >= 0 && shown < 8; i--) {
+                MoodEntity mood = moods.get(i);
+                if (shown > 0) historyBuilder.append('\n');
+
+                historyBuilder.append(mood.date)
+                        .append("  ")
+                        .append(getMoodEmoji(mood.moodLevel));
+
+                if (mood.note != null && !mood.note.trim().isEmpty()) {
+                    historyBuilder.append("  - ").append(mood.note.trim());
+                }
+
+                if (selectedDate != null && selectedDate.equals(mood.date)) {
+                    historyBuilder.append("  (Selected)");
+                }
+
+                shown++;
+            }
+
+            txtEntryHistory.setText(historyBuilder.toString());
+        });
+    }
+
+    private String getMoodEmoji(int moodLevel) {
+        switch (moodLevel) {
+            case 1: return "😫";
+            case 2: return "😔";
+            case 3: return "😐";
+            case 4: return "🙂";
+            default: return "🤩";
+        }
     }
 
 
