@@ -1,5 +1,7 @@
 package com.kunal.healthkriya.ui.mood.calendar;
 
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +62,26 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DateVi
             listener.onDateSelected(model.fullDate);
         });
 
+        if (model.moodLevel != null) {
+            holder.viewDot.setVisibility(View.VISIBLE);
+
+            int color;
+            switch (model.moodLevel) {
+                case 1: color = Color.RED; break;
+                case 2: color = Color.parseColor("#F97316"); break;
+                case 3: color = Color.GRAY; break;
+                case 4: color = Color.parseColor("#22C55E"); break;
+                default: color = Color.parseColor("#16A34A");
+            }
+
+            ((GradientDrawable) holder.viewDot.getBackground())
+                    .setColor(color);
+
+        } else {
+            holder.viewDot.setVisibility(View.GONE);
+        }
+
+
     }
 
     @Override
@@ -69,9 +91,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DateVi
 
     static class DateViewHolder extends RecyclerView.ViewHolder {
         TextView txtDate;
+        View viewDot;
         public DateViewHolder(@NonNull View itemView) {
             super(itemView);
             txtDate = itemView.findViewById(R.id.txtDate);
+            viewDot = itemView.findViewById(R.id.viewDot);
         }
     }
 }

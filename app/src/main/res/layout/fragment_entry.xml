@@ -9,11 +9,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp">
+
+
+        <TextView
+            android:id="@+id/txtStreak"
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:text="🔥 0 day streak"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <!-- Title -->
         <TextView

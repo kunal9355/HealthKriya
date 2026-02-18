@@ -1,12 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/txtDate"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="56dp"
     android:layout_height="72dp"
-    android:layout_marginEnd="10dp"
-    android:gravity="center"
-    android:text="21\nMon"
-    android:textColor="@color/health_text_primary"
-    android:textSize="14sp"
-    android:textStyle="bold"
-    android:background="@drawable/bg_date_normal" />
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/txtDate"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center"
+        android:text="21\nMon"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:background="@drawable/bg_date_normal"/>
+
+    <!-- Mood Dot -->
+    <View
+        android:id="@+id/viewDot"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_mood_dot"
+        android:visibility="gone"/>
+</LinearLayout>
