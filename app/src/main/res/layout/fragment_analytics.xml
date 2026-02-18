@@ -1,8 +1,41 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/health_background"
-    android:gravity="center"
-    android:text="Analytics Screen (Dummy)"
-    android:textColor="@color/health_text_primary"
-    android:textSize="18sp"/>
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Weekly -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weekly Mood Trend"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChartWeekly"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Monthly -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Monthly Overview"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="24dp"/>
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChartMonthly"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -53,4 +53,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     annotationProcessor(libs.room.compiler)
+
+    // graph ke liye use krte h
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

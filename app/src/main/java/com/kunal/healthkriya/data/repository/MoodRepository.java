@@ -46,6 +46,30 @@ public class MoodRepository {
         });
     }
 
+    public void getWeeklyMoods(AnalyticsCallback callback) {
+        EXECUTOR.execute(() -> {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Calendar cal = Calendar.getInstance();
+            String endDate = sdf.format(cal.getTime());
+            cal.add(Calendar.DAY_OF_MONTH, -6);
+            String startDate = sdf.format(cal.getTime());
+
+            List<MoodEntity> list = moodDao.getMoodsBetween(startDate, endDate);
+            if (callback != null) callback.onResult(list);
+        });
+    }
+
+    public void getMonthlyMoods(AnalyticsCallback callback) {
+        EXECUTOR.execute(() -> {
+            SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
+            String monthPrefix = monthFormat.format(new Date()) + "-%";
+            List<MoodEntity> list = moodDao.getMoodsInMonth(monthPrefix);
+            if (callback != null) callback.onResult(list);
+        });
+    }
+
+
+
     public void getAllMoods(AllMoodsCallback callback) {
         EXECUTOR.execute(() -> {
             List<MoodEntity> moods = moodDao.getAllMoods();
@@ -55,15 +79,16 @@ public class MoodRepository {
 
     public void getCurrentStreak(StreakCallback callback) {
         EXECUTOR.execute(() -> {
-            List<String> dates = moodDao.getAllMoodDates();
-            int streak = 0;
-
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             sdf.setLenient(false);
+            String todayStr = sdf.format(new Date());
+
+            List<String> dates = moodDao.getMoodDatesUntil(todayStr);
+            int streak = 0;
 
             Date expectedDate;
             try {
-                expectedDate = sdf.parse(sdf.format(new Date()));
+                expectedDate = sdf.parse(todayStr);
             } catch (ParseException e) {
                 if (callback != null) callback.onResult(0);
                 return;
@@ -91,6 +116,11 @@ public class MoodRepository {
 
             if (callback != null) callback.onResult(streak);
         });
+    }
+
+
+    public interface AnalyticsCallback {
+        void onResult(List<MoodEntity> list);
     }
 
     public interface MoodCallback {
