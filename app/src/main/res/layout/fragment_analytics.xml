@@ -1,41 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/health_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Weekly -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Weekly Mood Trend"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
-
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/lineChartWeekly"
+        <!-- Stats Cards -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_marginTop="8dp"/>
-
-        <!-- Monthly -->
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Overview"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:layout_marginTop="24dp"/>
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:layout_marginBottom="24dp">
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/barChartMonthly"
+            <!-- Avg -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/health_surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginEnd="8dp">
+
+                <TextView
+                    android:id="@+id/txtAvgMood"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Avg\n--"
+                    android:textStyle="bold"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="@color/health_text_primary"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Best -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/health_surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:layout_marginEnd="8dp">
+
+                <TextView
+                    android:id="@+id/txtBestDay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Best\n--"
+                    android:textStyle="bold"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="@color/health_text_primary"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Worst -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/health_surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+
+                <TextView
+                    android:id="@+id/txtWorstDay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Worst\n--"
+                    android:textStyle="bold"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="@color/health_text_primary"/>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Weekly Chart -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/health_surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weekly Mood Trend"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/health_text_primary"/>
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/lineChartWeekly"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="16dp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Monthly Chart -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/health_surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Monthly Mood Trend"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/health_text_primary"/>
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/lineChartMonthly"
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp"
+                    android:layout_marginTop="16dp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>
