@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.local.mood.MoodEntity;
 import com.kunal.healthkriya.data.repository.MoodRepository;
@@ -25,12 +26,12 @@ public class EntryFragment extends Fragment {
     private MoodRepository repository;
 
     private Button btnSaveMood;
+    private Button btnDeleteMood;
     private EditText etNote;
     private ImageView selectedEmojiView;
     private ImageView emojiAngry, emojiSad, emojiNeutral, emojiHappy, emojiVeryHappy;
-    private TextView txtDate, txtStreak, txtEntryHistory;
+    private TextView txtDate, txtStreak, txtEntryHistory, txtSyncStatus;
 
-    private boolean isUpdateMode = false;
     private String selectedDate;
     private int selectedMood = -1;
 
@@ -40,34 +41,34 @@ public class EntryFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_entry, container, false);
 
-        // Initialize views
         emojiAngry = view.findViewById(R.id.emojiAngry);
         emojiSad = view.findViewById(R.id.emojiSad);
         emojiNeutral = view.findViewById(R.id.emojiNeutral);
         emojiHappy = view.findViewById(R.id.emojiHappy);
         emojiVeryHappy = view.findViewById(R.id.emojiVeryHappy);
-        
+
         etNote = view.findViewById(R.id.etNote);
         btnSaveMood = view.findViewById(R.id.btnSaveMood);
+        btnDeleteMood = view.findViewById(R.id.btnDeleteMood);
         txtDate = view.findViewById(R.id.txtSelectedDate);
         txtStreak = view.findViewById(R.id.txtStreak);
         txtEntryHistory = view.findViewById(R.id.txtEntryHistory);
+        txtSyncStatus = view.findViewById(R.id.txtSyncStatus);
+
         repository = new MoodRepository(requireContext());
         refreshStreak();
         loadEntryHistory();
 
-        // Reset state
-        isUpdateMode = false;
         selectedMood = -1;
         selectedEmojiView = null;
         btnSaveMood.setText("Save Mood");
         btnSaveMood.setEnabled(false);
+        btnDeleteMood.setVisibility(View.GONE);
+        txtSyncStatus.setText("Sync: --");
 
         etNote.setText("");
         clearEmojiSelection();
 
-
-        // Get date from arguments
         if (getArguments() != null) {
             selectedDate = getArguments().getString("SELECTED_DATE");
         }
@@ -79,7 +80,6 @@ public class EntryFragment extends Fragment {
             txtDate.setText("Date: Not selected");
         }
 
-        // Click listeners
         emojiAngry.setOnClickListener(v -> onEmojiClicked(emojiAngry, 1));
         emojiSad.setOnClickListener(v -> onEmojiClicked(emojiSad, 2));
         emojiNeutral.setOnClickListener(v -> onEmojiClicked(emojiNeutral, 3));
@@ -87,6 +87,7 @@ public class EntryFragment extends Fragment {
         emojiVeryHappy.setOnClickListener(v -> onEmojiClicked(emojiVeryHappy, 5));
 
         btnSaveMood.setOnClickListener(v -> saveMood());
+        btnDeleteMood.setOnClickListener(v -> deleteMoodWithUndo());
 
         return view;
     }
@@ -96,21 +97,24 @@ public class EntryFragment extends Fragment {
 
         repository.getMoodByDate(selectedDate, mood -> {
             if (!isAdded()) return;
+
             requireActivity().runOnUiThread(() -> {
                 if (mood != null) {
-                    isUpdateMode = true;
                     selectedMood = mood.moodLevel;
                     etNote.setText(mood.note);
                     btnSaveMood.setText("Update Mood");
+                    btnSaveMood.setEnabled(true);
+                    btnDeleteMood.setVisibility(View.VISIBLE);
                     preSelectEmoji(mood.moodLevel);
+                    updateSyncUI(mood.syncStatus);
                 } else {
-                    isUpdateMode = false;
                     btnSaveMood.setText("Save Mood");
                     btnSaveMood.setEnabled(selectedMood != -1);
+                    btnDeleteMood.setVisibility(View.GONE);
+                    txtSyncStatus.setText("No saved entry");
                 }
             });
         });
-
     }
 
     private void clearEmojiSelection() {
@@ -133,11 +137,9 @@ public class EntryFragment extends Fragment {
         emojiVeryHappy.setScaleY(1f);
     }
 
-
     private void onEmojiClicked(ImageView emojiView, int moodLevel) {
         selectedMood = moodLevel;
         updateEmojiSelectionUI(emojiView);
-        
         btnSaveMood.setEnabled(true);
         btnSaveMood.setAlpha(1f);
     }
@@ -146,11 +148,21 @@ public class EntryFragment extends Fragment {
         selectedMood = moodLevel;
         ImageView target = null;
         switch (moodLevel) {
-            case 1: target = emojiAngry; break;
-            case 2: target = emojiSad; break;
-            case 3: target = emojiNeutral; break;
-            case 4: target = emojiHappy; break;
-            case 5: target = emojiVeryHappy; break;
+            case 1:
+                target = emojiAngry;
+                break;
+            case 2:
+                target = emojiSad;
+                break;
+            case 3:
+                target = emojiNeutral;
+                break;
+            case 4:
+                target = emojiHappy;
+                break;
+            case 5:
+                target = emojiVeryHappy;
+                break;
         }
         if (target != null) {
             updateEmojiSelectionUI(target);
@@ -160,7 +172,6 @@ public class EntryFragment extends Fragment {
     }
 
     private void updateEmojiSelectionUI(ImageView emojiView) {
-        // Reset previous selection
         if (selectedEmojiView != null) {
             selectedEmojiView.setBackgroundResource(R.drawable.bg_emoji_normal);
             selectedEmojiView.animate()
@@ -171,7 +182,6 @@ public class EntryFragment extends Fragment {
             selectedEmojiView.setAlpha(0.6f);
         }
 
-        // Apply new selection
         selectedEmojiView = emojiView;
         selectedEmojiView.setAlpha(1f);
         selectedEmojiView.setBackgroundResource(R.drawable.bg_emoji_selected);
@@ -180,17 +190,13 @@ public class EntryFragment extends Fragment {
                 .scaleX(1.35f)
                 .scaleY(1.35f)
                 .setDuration(180)
-                .withEndAction(() ->
-                        selectedEmojiView.animate()
-                                .scaleX(1.25f)
-                                .scaleY(1.25f)
-                                .setDuration(120)
-                )
+                .withEndAction(() -> selectedEmojiView.animate()
+                        .scaleX(1.25f)
+                        .scaleY(1.25f)
+                        .setDuration(120))
                 .start();
 
-        selectedEmojiView.performHapticFeedback(
-                android.view.HapticFeedbackConstants.KEYBOARD_TAP
-        );
+        selectedEmojiView.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP);
     }
 
     private void saveMood() {
@@ -211,19 +217,70 @@ public class EntryFragment extends Fragment {
         );
 
         btnSaveMood.setEnabled(false);
+        txtSyncStatus.setText("⏳ Pending");
+
         repository.saveMood(entity, (success, error) -> {
             if (!isAdded()) return;
             requireActivity().runOnUiThread(() -> {
                 btnSaveMood.setEnabled(true);
                 if (success) {
-                    isUpdateMode = true;
-                    btnSaveMood.setText("Update Mood");
-                    Toast.makeText(getContext(), "Mood Saved", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Mood saved", Toast.LENGTH_SHORT).show();
                     refreshStreak();
                     loadEntryHistory();
                     requireActivity().finish();
                 } else {
+                    txtSyncStatus.setText("⚠️ Error");
                     Toast.makeText(getContext(), "Save failed, please try again", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
+    private void deleteMoodWithUndo() {
+        if (selectedDate == null || selectedDate.isEmpty()) return;
+
+        btnDeleteMood.setEnabled(false);
+        repository.softDeleteMood(selectedDate, (success, error) -> {
+            if (!isAdded()) return;
+            requireActivity().runOnUiThread(() -> {
+                btnDeleteMood.setEnabled(true);
+                if (!success) {
+                    Toast.makeText(getContext(), "Delete failed", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                txtSyncStatus.setText("⏳ Pending");
+                loadEntryHistory();
+                refreshStreak();
+
+                Snackbar.make(requireView(), "Mood deleted", Snackbar.LENGTH_LONG)
+                        .setAction("Undo", v -> undoDelete())
+                        .show();
+
+                clearEmojiSelection();
+                etNote.setText("");
+                selectedMood = -1;
+                btnSaveMood.setText("Save Mood");
+                btnSaveMood.setEnabled(false);
+                btnDeleteMood.setVisibility(View.GONE);
+            });
+        });
+    }
+
+    private void undoDelete() {
+        if (selectedDate == null || selectedDate.isEmpty()) return;
+
+        repository.undoDeleteMood(selectedDate, (success, error) -> {
+            if (!isAdded()) return;
+            requireActivity().runOnUiThread(() -> {
+                if (success) {
+                    Toast.makeText(getContext(), "Undo successful", Toast.LENGTH_SHORT).show();
+                    checkExistingEntry();
+                    loadEntryHistory();
+                    refreshStreak();
+                    txtSyncStatus.setText("⏳ Pending");
+                } else {
+                    Toast.makeText(getContext(), "Undo failed", Toast.LENGTH_SHORT).show();
                 }
             });
         });
@@ -242,7 +299,6 @@ public class EntryFragment extends Fragment {
 
     private void loadEntryHistory() {
         if (repository == null || txtEntryHistory == null) return;
-
         repository.getAllMoods(this::renderEntryHistory);
     }
 
@@ -263,7 +319,10 @@ public class EntryFragment extends Fragment {
 
                 historyBuilder.append(mood.date)
                         .append("  ")
-                        .append(getMoodEmoji(mood.moodLevel));
+                        .append(getMoodEmoji(mood.moodLevel))
+                        .append("  [")
+                        .append(getSyncLabel(mood.syncStatus))
+                        .append("]");
 
                 if (mood.note != null && !mood.note.trim().isEmpty()) {
                     historyBuilder.append("  - ").append(mood.note.trim());
@@ -272,7 +331,6 @@ public class EntryFragment extends Fragment {
                 if (selectedDate != null && selectedDate.equals(mood.date)) {
                     historyBuilder.append("  (Selected)");
                 }
-
                 shown++;
             }
 
@@ -282,14 +340,32 @@ public class EntryFragment extends Fragment {
 
     private String getMoodEmoji(int moodLevel) {
         switch (moodLevel) {
-            case 1: return "😫";
-            case 2: return "😔";
-            case 3: return "😐";
-            case 4: return "🙂";
-            default: return "🤩";
+            case 1:
+                return "😫";
+            case 2:
+                return "😔";
+            case 3:
+                return "😐";
+            case 4:
+                return "🙂";
+            default:
+                return "🤩";
         }
     }
 
+    private String getSyncLabel(int status) {
+        if (status == MoodEntity.SYNC_SYNCED) return "Synced";
+        if (status == MoodEntity.SYNC_ERROR) return "Error";
+        return "Pending";
+    }
 
-
+    private void updateSyncUI(int status) {
+        if (status == MoodEntity.SYNC_SYNCED) {
+            txtSyncStatus.setText("✅ Synced");
+        } else if (status == MoodEntity.SYNC_ERROR) {
+            txtSyncStatus.setText("⚠️ Error");
+        } else {
+            txtSyncStatus.setText("⏳ Pending");
+        }
+    }
 }
