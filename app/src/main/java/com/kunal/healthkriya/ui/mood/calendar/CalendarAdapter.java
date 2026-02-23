@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kunal.healthkriya.R;
@@ -51,6 +52,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DateVi
         holder.txtDate.setText(model.date + "\n" + model.day);
         holder.txtDate.setBackgroundResource(
                 model.isSelected ? R.drawable.bg_date_selected : R.drawable.bg_date_normal
+        );
+        holder.txtDate.setTextColor(
+                ContextCompat.getColor(
+                        holder.itemView.getContext(),
+                        model.isSelected
+                                ? R.color.calendar_date_text_selected
+                                : R.color.calendar_date_text_normal
+                )
         );
 
         holder.itemView.setOnClickListener(v -> {

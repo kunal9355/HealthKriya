@@ -2,12 +2,14 @@ package com.kunal.healthkriya.ui.mood;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
 import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.local.mood.MoodEntity;
 import com.kunal.healthkriya.data.repository.MoodRepository;
@@ -32,6 +34,20 @@ public class MoodHubActivity extends AppCompatActivity {
     private SimpleDateFormat dayFormat;
     private SimpleDateFormat dateFormat;
     private SimpleDateFormat fullFormat;
+    private MaterialCardView cardDayPreview;
+    private TextView txtPreviewDate;
+    private TextView txtPreviewMood;
+    private TextView txtPreviewNote;
+
+    private String getEmoji(int level) {
+        switch (level) {
+            case 1: return "😡";
+            case 2: return "😞";
+            case 3: return "😐";
+            case 4: return "🙂";
+            default: return "😄";
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +73,10 @@ public class MoodHubActivity extends AppCompatActivity {
         findViewById(R.id.cardJournal).setOnClickListener(v -> openMoodContainer(1,selectedDate));
         findViewById(R.id.cardAnalytics).setOnClickListener(v -> openMoodContainer(2,selectedDate));
 
+        cardDayPreview = findViewById(R.id.cardDayPreview);
+        txtPreviewDate = findViewById(R.id.txtPreviewDate);
+        txtPreviewMood = findViewById(R.id.txtPreviewMood);
+        txtPreviewNote = findViewById(R.id.txtPreviewNote);
 
         RecyclerView rvCalendar = findViewById(R.id.rvCalendar);
         rvCalendar.setLayoutManager(
@@ -64,7 +84,10 @@ public class MoodHubActivity extends AppCompatActivity {
         );
 
         adapter = new CalendarAdapter(calendarList,
-                date -> selectedDate = date);
+                date -> {
+                    selectedDate = date;
+                    loadDayPreview();
+                });
         rvCalendar.setAdapter(adapter);
 
         Calendar calendar = Calendar.getInstance();
@@ -132,9 +155,31 @@ public class MoodHubActivity extends AppCompatActivity {
                 calendarList.addAll(generatedDates);
                 adapter.notifyDataSetChanged();
                 selectedDate = finalTargetDate;
+                loadDayPreview();
             });
         });
+    }
 
+    private void loadDayPreview() {
+        if (repository == null || selectedDate == null || selectedDate.isEmpty()) return;
+
+        repository.getMoodByDate(selectedDate, mood -> runOnUiThread(() -> {
+            cardDayPreview.setVisibility(View.VISIBLE);
+
+            if (mood != null) {
+                txtPreviewDate.setText(mood.date);
+                txtPreviewMood.setText(getEmoji(mood.moodLevel));
+                txtPreviewNote.setText(
+                        mood.note == null || mood.note.trim().isEmpty()
+                                ? "No note for this day"
+                                : mood.note.trim()
+                );
+            } else {
+                txtPreviewDate.setText(selectedDate);
+                txtPreviewMood.setText("");
+                txtPreviewNote.setText("No entry for this day");
+            }
+        }));
     }
 
     private void openMoodContainer(int startTab, String date) {
