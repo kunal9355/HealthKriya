@@ -10,6 +10,7 @@
         android:layout_height="56dp"
         android:gravity="center"
         android:text="21\nMon"
+        android:textColor="@color/calendar_date_text_normal"
         android:textStyle="bold"
         android:textSize="14sp"
         android:background="@drawable/bg_date_normal"/>

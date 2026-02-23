@@ -49,6 +49,8 @@
     <color name="date_chip_bg">#FFFFFFFF</color>
     <color name="date_chip_stroke">#D1D9D4</color>
     <color name="date_chip_selected_bg">#D9E8F8</color>
+    <color name="calendar_date_text_normal">#1D2A24</color>
+    <color name="calendar_date_text_selected">#12395B</color>
 
     <!-- Auth -->
     <color name="auth_screen_bg">#DCEDE7</color>
@@ -58,4 +60,25 @@
     <color name="auth_subtitle_text">#DDF3EF</color>
     <color name="auth_link_text">#0E7A68</color>
     <color name="auth_input_bg">#F3F6F4</color>
+
+    <!-- Journal status/mood -->
+    <color name="journal_sync_synced_bg">#DCF6E8</color>
+    <color name="journal_sync_synced_text">#14663E</color>
+    <color name="journal_sync_pending_bg">#FFF0D4</color>
+    <color name="journal_sync_pending_text">#8C5A00</color>
+    <color name="journal_sync_error_bg">#FDE1E1</color>
+    <color name="journal_sync_error_text">#A51E1E</color>
+
+    <color name="journal_mood_1">#E53935</color>
+    <color name="journal_mood_2">#EF6C00</color>
+    <color name="journal_mood_3">#9E9E9E</color>
+    <color name="journal_mood_4">#43A047</color>
+    <color name="journal_mood_5">#1DB954</color>
+
+    <color name="journal_filter_bg">#FFFFFFFF</color>
+    <color name="journal_filter_bg_selected">#D9E8F8</color>
+    <color name="journal_filter_border">#D1D9D4</color>
+    <color name="journal_filter_border_selected">#6A9AC5</color>
+    <color name="journal_filter_text">#5F6F67</color>
+    <color name="journal_filter_text_selected">#12395B</color>
 </resources>
