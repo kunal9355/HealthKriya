@@ -6,12 +6,11 @@ plugins {
 android {
     namespace = "com.kunal.healthkriya"
     compileSdk = 36
-    // Adjusted to a stable API level
 
     defaultConfig {
         applicationId = "com.kunal.healthkriya"
         minSdk = 24
-        targetSdk = 35 // API 36 is experimental/future; 35 is stable Android 15
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 

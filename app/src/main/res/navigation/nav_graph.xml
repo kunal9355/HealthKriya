@@ -67,8 +67,17 @@
 
     <fragment
         android:id="@+id/remindersFragment"
-        android:name="com.kunal.healthkriya.ui.reminder.RemindersFragment"
-        android:label="Reminders" />
+        android:name="com.kunal.healthkriya.ui.reminder.MedicineReminderFragment"
+        android:label="Reminders">
+        <action
+            android:id="@+id/action_remindersFragment_to_addReminderFragment"
+            app:destination="@id/addReminderFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addReminderFragment"
+        android:name="com.kunal.healthkriya.ui.reminder.AddMedicineFragment"
+        android:label="Add Reminder" />
 
     <fragment
         android:id="@+id/profileFragment"

@@ -31,6 +31,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.reminder.MedicineReminderActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.mood.journal.JournalDetailActivity"
             android:exported="false" />
 
