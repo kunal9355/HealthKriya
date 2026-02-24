@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
     <queries>
         <package android:name="com.google.android.gms" />
@@ -36,6 +38,10 @@
 
         <activity
             android:name=".ui.mood.journal.JournalDetailActivity"
+            android:exported="false" />
+
+        <receiver
+            android:name=".ui.reminder.ReminderReceiver"
             android:exported="false" />
 
         <activity
