@@ -21,6 +21,7 @@ import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.model.home.HomeDataModel;
 import com.kunal.healthkriya.ui.mood.MoodContainerActivity;
 import com.kunal.healthkriya.ui.mood.MoodHubActivity;
+import com.kunal.healthkriya.ui.reminder.MedicineReminderActivity;
 
 public class HomeFragment extends Fragment {
 
@@ -80,9 +81,14 @@ public class HomeFragment extends Fragment {
             Intent intent = new Intent(requireContext(), MoodHubActivity.class);
             startActivity(intent);
         });
-        cardMedicine.setOnClickListener(v -> showTemp("Medicine"));
+        cardMedicine.setOnClickListener(v -> openReminderPage());
         cardDonate.setOnClickListener(v -> showTemp("Donate / Request"));
         cardEmergency.setOnClickListener(v -> showTemp("Emergency"));
+    }
+
+    private void openReminderPage() {
+        Intent intent = new Intent(requireContext(), MedicineReminderActivity.class);
+        startActivity(intent);
     }
 
     private void setupScrollListener() {
