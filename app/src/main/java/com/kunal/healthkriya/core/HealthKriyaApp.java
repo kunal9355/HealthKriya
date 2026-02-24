@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kunal.healthkriya.data.repository.MoodRepository;
+import com.kunal.healthkriya.data.repository.ReminderRepository;
 
 public class HealthKriyaApp extends Application {
 
@@ -38,17 +39,21 @@ public class HealthKriyaApp extends Application {
                 isDark ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
         );
 
-        // Sync mood data when auth user is available (works for login-after-launch flow too)
-        MoodRepository repository = new MoodRepository(this);
+        // Sync mood + reminder data when auth user is available (works for login-after-launch flow too)
+        MoodRepository moodRepository = new MoodRepository(this);
+        ReminderRepository reminderRepository = new ReminderRepository(this);
         FirebaseAuth.getInstance().addAuthStateListener(auth -> {
             String uid = auth.getUid();
             if (uid == null) {
                 lastSyncedUid = null;
+                reminderRepository.stopRealtimeSync();
+                moodRepository.stopRealtimeSync();
                 return;
             }
             if (!uid.equals(lastSyncedUid)) {
                 lastSyncedUid = uid;
-                repository.restoreFromFirebase();
+                moodRepository.restoreFromFirebase();
+                reminderRepository.restoreFromFirebase();
             }
         });
     }

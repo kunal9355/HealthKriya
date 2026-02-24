@@ -2,51 +2,77 @@ package com.kunal.healthkriya.ui.reminder;
 
 import android.Manifest;
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-
-import androidx.fragment.app.Fragment;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.content.ContextCompat;
-import androidx.navigation.fragment.NavHostFragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.kunal.healthkriya.R;
-import com.kunal.healthkriya.ui.reminder.model.MedicineModel;
+import com.kunal.healthkriya.data.local.reminder.ReminderEntity;
+import com.kunal.healthkriya.data.repository.ReminderRepository;
 
-import java.util.Calendar;
 import java.util.Locale;
 
 public class AddMedicineFragment extends Fragment {
+    public static final String ARG_CLIENT_ID = "arg_client_id";
+
     private static final String TAG = "AddMedicineFragment";
 
-    private TextInputEditText etMedicineName, etDosage;
+    private TextInputEditText etMedicineName;
+    private TextInputEditText etDosage;
     private Button btnSelectTime;
     private MaterialButton btnSaveMedicine;
+    private RadioGroup radioRepeat;
+    private TextView tvFormTitle;
 
     private int selectedHour = -1;
     private int selectedMinute = -1;
+
+    private String editingClientId;
+    private ReminderEntity editingReminder;
+
+    private ReminderRepository reminderRepository;
     private ActivityResultLauncher<String> notificationPermissionLauncher;
+
+    public static AddMedicineFragment newInstanceForEdit(String clientId) {
+        AddMedicineFragment fragment = new AddMedicineFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_CLIENT_ID, clientId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            editingClientId = args.getString(ARG_CLIENT_ID);
+        }
+
+        reminderRepository = new ReminderRepository(requireContext());
+
         notificationPermissionLauncher =
                 registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
                     if (!granted && isAdded()) {
@@ -62,22 +88,63 @@ public class AddMedicineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_add_medicine, container, false);
 
+        tvFormTitle = view.findViewById(R.id.tvFormTitle);
         etMedicineName = view.findViewById(R.id.etMedicineName);
         etDosage = view.findViewById(R.id.etDosage);
         btnSelectTime = view.findViewById(R.id.btnSelectTime);
         btnSaveMedicine = view.findViewById(R.id.btnSaveMedicine);
+        radioRepeat = view.findViewById(R.id.radioRepeat);
 
         btnSelectTime.setOnClickListener(v -> openTimePicker());
-
         btnSaveMedicine.setOnClickListener(v -> saveMedicine());
 
+        setupMode();
         return view;
     }
 
+    private void setupMode() {
+        if (isEditMode()) {
+            tvFormTitle.setText("Edit Medicine");
+            btnSaveMedicine.setText("Update Medicine");
+            loadReminderForEdit();
+        } else {
+            tvFormTitle.setText("Add Medicine");
+            btnSaveMedicine.setText("Save Medicine");
+        }
+    }
+
+    private void loadReminderForEdit() {
+        if (editingClientId == null) {
+            return;
+        }
+
+        reminderRepository.getReminderByClientId(editingClientId, reminder -> {
+            if (!isAdded()) {
+                return;
+            }
+            if (reminder == null) {
+                Toast.makeText(requireContext(), "Reminder not found", Toast.LENGTH_SHORT).show();
+                closeScreen();
+                return;
+            }
+
+            editingReminder = reminder;
+            etMedicineName.setText(reminder.name);
+            etDosage.setText(reminder.dosage);
+            selectedHour = reminder.hour;
+            selectedMinute = reminder.minute;
+            btnSelectTime.setText(String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute));
+
+            radioRepeat.check(reminder.repeatDaily ? R.id.rbDaily : R.id.rbCustom);
+        });
+    }
+
     private void openTimePicker() {
+        int initialHour = selectedHour >= 0 ? selectedHour : 12;
+        int initialMinute = selectedMinute >= 0 ? selectedMinute : 0;
+
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 getContext(),
                 (view, hourOfDay, minute) -> {
@@ -85,7 +152,9 @@ public class AddMedicineFragment extends Fragment {
                     selectedMinute = minute;
                     btnSelectTime.setText(String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute));
                 },
-                12, 0, true
+                initialHour,
+                initialMinute,
+                true
         );
         timePickerDialog.show();
     }
@@ -102,82 +171,97 @@ public class AddMedicineFragment extends Fragment {
             etDosage.setError("Dosage required");
             return;
         }
-        if (selectedHour == -1) {
+        if (selectedHour < 0 || selectedMinute < 0) {
             Toast.makeText(getContext(), "Please select time", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String time = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
+        if (isEditMode() && editingReminder == null) {
+            Toast.makeText(getContext(), "Wait, loading reminder...", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        MedicineModel model = new MedicineModel(name, dosage, time);
-        MedicineReminderFragment.medicineList.add(model);
+        boolean isDailyRepeat = isDailyRepeatSelected();
+        ReminderEntity reminder = buildReminderForSave(name, dosage, isDailyRepeat);
 
         ensureNotificationPermission();
-        boolean alarmScheduled = scheduleAlarm(name, dosage, time);
-
-        if (alarmScheduled) {
-            Toast.makeText(getContext(), "Medicine added. Alarm set 🔔", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(
-                    getContext(),
-                    "Medicine added, but exact alarm permission is required.",
-                    Toast.LENGTH_LONG
-            ).show();
+        AlarmScheduler.cancelReminder(requireContext(), reminder.clientId);
+        boolean alarmScheduled = AlarmScheduler.scheduleReminder(requireContext(), reminder);
+        if (!alarmScheduled) {
+            requestExactAlarmPermissionIfNeeded();
         }
 
-        closeScreen();
+        reminderRepository.saveReminder(reminder, (success, error) -> {
+            if (!isAdded()) {
+                return;
+            }
+
+            if (!success) {
+                Toast.makeText(requireContext(), "Failed to save reminder", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String action = isEditMode() ? "updated" : "added";
+            if (alarmScheduled) {
+                Toast.makeText(requireContext(), "Medicine " + action + ". Alarm set", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(
+                        requireContext(),
+                        "Medicine " + action + ". Enable exact alarm permission for precise alerts.",
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+
+            closeScreen();
+        });
     }
 
-    private boolean scheduleAlarm(String medicineName, String dosage, String time) {
-        Context context = getContext();
-        if (context == null) return false;
+    private ReminderEntity buildReminderForSave(String name, String dosage, boolean isDailyRepeat) {
+        long triggerAt = AlarmScheduler.computeInitialTriggerAt(selectedHour, selectedMinute, isDailyRepeat);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, selectedHour);
-        calendar.set(Calendar.MINUTE, selectedMinute);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        if (isEditMode()) {
+            ReminderEntity reminder = editingReminder;
+            reminder.name = name;
+            reminder.dosage = dosage;
+            reminder.hour = selectedHour;
+            reminder.minute = selectedMinute;
+            reminder.repeatDaily = isDailyRepeat;
+            reminder.triggerAt = triggerAt;
+            reminder.active = true;
+            reminder.deleted = false;
+            return reminder;
         }
 
-        Intent intent = new Intent(context, ReminderReceiver.class);
-        intent.putExtra("medicine_name", medicineName);
-        intent.putExtra("medicine_dosage", dosage);
-        intent.putExtra("medicine_time", time);
-
-        int requestCode = buildRequestCode(medicineName, selectedHour, selectedMinute);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context,
-                requestCode,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        return new ReminderEntity(
+                ReminderRepository.newClientId(),
+                name,
+                dosage,
+                selectedHour,
+                selectedMinute,
+                isDailyRepeat,
+                triggerAt
         );
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager == null) return false;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            requestExactAlarmPermission();
-            return false;
-        }
-
-        long triggerAt = calendar.getTimeInMillis();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent);
-        } else {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent);
-        }
-        return true;
     }
 
-    private void requestExactAlarmPermission() {
-        if (!isAdded() || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
+    private boolean isEditMode() {
+        return editingClientId != null && !editingClientId.trim().isEmpty();
+    }
+
+    private void requestExactAlarmPermissionIfNeeded() {
+        if (!isAdded() || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return;
+        }
+
+        Context context = requireContext();
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null && alarmManager.canScheduleExactAlarms()) {
+            return;
+        }
 
         try {
             Intent intent = new Intent(
                     Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                    Uri.parse("package:" + requireContext().getPackageName())
+                    Uri.parse("package:" + context.getPackageName())
             );
             startActivity(intent);
         } catch (Exception e) {
@@ -186,21 +270,29 @@ public class AddMedicineFragment extends Fragment {
     }
 
     private void ensureNotificationPermission() {
-        if (!isAdded() || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return;
+        if (!isAdded() || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
                 == PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
         notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
     }
 
-    private int buildRequestCode(String name, int hour, int minute) {
-        int base = name == null ? 0 : name.hashCode();
-        return Math.abs((base * 31) + (hour * 60) + minute);
+    private boolean isDailyRepeatSelected() {
+        if (radioRepeat == null) {
+            return true;
+        }
+        return radioRepeat.getCheckedRadioButtonId() == R.id.rbDaily;
     }
 
     private void closeScreen() {
-        if (!isAdded()) return;
+        if (!isAdded()) {
+            return;
+        }
 
         View reminderContainer = requireActivity().findViewById(R.id.reminderContainer);
         if (reminderContainer != null) {
