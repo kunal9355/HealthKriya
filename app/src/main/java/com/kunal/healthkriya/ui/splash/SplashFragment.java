@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +38,7 @@ public class SplashFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(SplashViewModel.class);
+        startLogoAnimation(view);
 
         handler.postDelayed(navigateRunnable, 1500);
     }
@@ -67,5 +69,25 @@ public class SplashFragment extends Fragment {
         } else {
             navController.navigate(R.id.action_splashFragment_to_onboardingFragment);
         }
+    }
+
+    private void startLogoAnimation(@NonNull View rootView) {
+        View logo = rootView.findViewById(R.id.imgLogo);
+        if (logo == null) return;
+
+        float travelY = 18f * rootView.getResources().getDisplayMetrics().density;
+        logo.setAlpha(0f);
+        logo.setScaleX(0.92f);
+        logo.setScaleY(0.92f);
+        logo.setTranslationY(travelY);
+        logo.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .translationY(0f)
+                .setDuration(900L)
+                .setStartDelay(80L)
+                .setInterpolator(new DecelerateInterpolator())
+                .start();
     }
 }
