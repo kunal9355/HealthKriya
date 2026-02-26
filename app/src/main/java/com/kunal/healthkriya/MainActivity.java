@@ -10,6 +10,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.kunal.healthkriya.core.WindowInsetUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +18,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        View rootMain = findViewById(R.id.rootMain);
+        View bottomNavContainer = findViewById(R.id.bottomNavContainer);
+        WindowInsetUtils.applySystemBarPadding(rootMain, true, false);
+        WindowInsetUtils.applyNavigationBarMargin(bottomNavContainer, 6);
 
         NavHostFragment navHostFragment =
                 (NavHostFragment) getSupportFragmentManager()

@@ -1,11 +1,13 @@
 package com.kunal.healthkriya.ui.mood.journal;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.kunal.healthkriya.R;
+import com.kunal.healthkriya.core.WindowInsetUtils;
 import com.kunal.healthkriya.data.local.mood.MoodEntity;
 import com.kunal.healthkriya.data.repository.MoodRepository;
 
@@ -23,6 +25,8 @@ public class JournalDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_journal_detail);
+        View root = findViewById(R.id.rootJournalDetail);
+        WindowInsetUtils.applySystemBarPadding(root, true, true);
 
         repository = new MoodRepository(this);
 
