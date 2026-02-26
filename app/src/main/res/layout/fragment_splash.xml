@@ -6,45 +6,16 @@
     android:layout_height="match_parent"
     android:background="@color/health_primary">
 
-    <LinearLayout
-        android:id="@+id/brandContainer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingHorizontal="24dp"
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="172dp"
+        android:layout_height="172dp"
+        android:contentDescription="HealthKriya Logo"
+        android:src="@drawable/ic_health_logo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.42">
-
-        <ImageView
-            android:id="@+id/imgLogo"
-            android:layout_width="134dp"
-            android:layout_height="134dp"
-            android:contentDescription="HealthKriya Logo"
-            android:src="@drawable/ic_health_logo" />
-
-        <TextView
-            android:id="@+id/txtAppName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="HealthKriya"
-            android:textColor="@android:color/white"
-            android:textSize="40sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtTagline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Your Health. One Place."
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
-
-    </LinearLayout>
+        app:layout_constraintVertical_bias="0.48" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
