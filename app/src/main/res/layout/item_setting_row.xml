@@ -28,7 +28,7 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Title"
+            android:text=""
             android:textSize="16sp"
             android:textColor="@color/health_text_primary"/>
 
@@ -36,7 +36,7 @@
             android:id="@+id/subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Subtitle"
+            android:text=""
             android:textSize="13sp"
             android:textColor="@color/health_text_secondary"/>
     </LinearLayout>
