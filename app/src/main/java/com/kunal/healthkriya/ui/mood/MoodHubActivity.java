@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.kunal.healthkriya.R;
+import com.kunal.healthkriya.core.WindowInsetUtils;
 import com.kunal.healthkriya.data.local.mood.MoodEntity;
 import com.kunal.healthkriya.data.repository.MoodRepository;
 import com.kunal.healthkriya.ui.mood.calendar.CalendarAdapter;
@@ -53,6 +54,8 @@ public class MoodHubActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_hub);
+        View root = findViewById(R.id.rootMoodHub);
+        WindowInsetUtils.applySystemBarPadding(root, true, true);
 
         // Setup Entry option
         TextView txtEntry = findViewById(R.id.cardEntry).findViewById(R.id.txtTitle);
