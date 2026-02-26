@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.kunal.healthkriya.data.repository.DonationRepository;
 import com.kunal.healthkriya.data.repository.MoodRepository;
 import com.kunal.healthkriya.data.repository.ReminderRepository;
 
@@ -40,18 +41,21 @@ public class HealthKriyaApp extends Application {
         );
 
         // Sync mood + reminder data when auth user is available (works for login-after-launch flow too)
+        DonationRepository donationRepository = new DonationRepository(this);
         MoodRepository moodRepository = new MoodRepository(this);
         ReminderRepository reminderRepository = new ReminderRepository(this);
         FirebaseAuth.getInstance().addAuthStateListener(auth -> {
             String uid = auth.getUid();
             if (uid == null) {
                 lastSyncedUid = null;
+                donationRepository.stopRealtimeSync();
                 reminderRepository.stopRealtimeSync();
                 moodRepository.stopRealtimeSync();
                 return;
             }
             if (!uid.equals(lastSyncedUid)) {
                 lastSyncedUid = uid;
+                donationRepository.restoreFromFirebase();
                 moodRepository.restoreFromFirebase();
                 reminderRepository.restoreFromFirebase();
             }

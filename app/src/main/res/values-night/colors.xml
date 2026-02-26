@@ -25,6 +25,12 @@
     <color name="emergency_card_bg">#371E22</color>
     <color name="emergency_text">#FF7D7D</color>
     <color name="emergency_subtext">#D9A2A8</color>
+    <color name="donation_donate_grad_start">#223C33</color>
+    <color name="donation_donate_grad_end">#183027</color>
+    <color name="donation_donate_stroke">#2E6A50</color>
+    <color name="donation_request_grad_start">#43262C</color>
+    <color name="donation_request_grad_end">#351C21</color>
+    <color name="donation_request_stroke">#6E3E46</color>
 
     <!-- Mood hub -->
     <color name="mood_hub_bg">#0F1514</color>
