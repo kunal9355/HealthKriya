@@ -138,6 +138,12 @@
             android:id="@+id/action_profile_to_changePassword"
             app:destination="@id/changePasswordFragment" />
         <action
+            android:id="@+id/action_profile_to_careActivity"
+            app:destination="@id/careActivityFragment" />
+        <action
+            android:id="@+id/action_profile_to_healthRecords"
+            app:destination="@id/healthRecordsFragment" />
+        <action
             android:id="@+id/action_profile_to_emergency"
             app:destination="@id/emergencyFragment" />
         <action
@@ -151,6 +157,16 @@
         android:id="@+id/changePasswordFragment"
         android:name="com.kunal.healthkriya.ui.profile.ChangePasswordFragment"
         android:label="Change Password" />
+
+    <fragment
+        android:id="@+id/careActivityFragment"
+        android:name="com.kunal.healthkriya.ui.profile.CareActivityFragment"
+        android:label="Care Activity" />
+
+    <fragment
+        android:id="@+id/healthRecordsFragment"
+        android:name="com.kunal.healthkriya.ui.profile.HealthRecordsFragment"
+        android:label="Health Records" />
 
     <fragment
         android:id="@+id/emergencyFragment"

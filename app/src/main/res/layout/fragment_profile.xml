@@ -10,140 +10,125 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- PROFILE HEADER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingBottom="20dp">
-
-
+            android:orientation="horizontal"
+            android:paddingBottom="16dp">
 
             <ImageView
                 android:id="@+id/imgProfile"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:src="@drawable/ic_profile"
+                android:layout_width="62dp"
+                android:layout_height="62dp"
                 android:background="@drawable/bg_circle"
-                android:padding="8dp"/>
+                android:padding="8dp"
+                android:src="@drawable/ic_profile" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
                 android:layout_weight="1"
-                android:layout_marginStart="16dp"
                 android:orientation="vertical">
-
-
 
                 <TextView
                     android:id="@+id/txtName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="User Name"
                     android:textColor="@color/health_text_primary"
                     android:textSize="18sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="user@email.com"
+                    android:layout_marginTop="2dp"
                     android:textColor="@color/health_text_secondary"
-                    android:textSize="14sp"/>
-
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/txtPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+91 XXXXXXXX"
+                    android:layout_marginTop="1dp"
                     android:textColor="@color/health_text_secondary"
-                    android:textSize="14sp"/>
-
-
-                <Switch
-                    android:id="@+id/switchTheme"
-                    android:layout_marginLeft="175dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/health_text_primary"
-                    android:text="Dark Mode"/>
-
-
+                    android:textSize="13sp" />
             </LinearLayout>
+
+            <Switch
+                android:id="@+id/switchTheme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dark mode"
+                android:textColor="@color/health_text_primary" />
         </LinearLayout>
 
-        <!-- ACCOUNT -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ACCOUNT"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:letterSpacing="0.1"
             android:layout_marginBottom="8dp"
-            android:textColor="@color/health_text_secondary"/>
+            android:letterSpacing="0.08"
+            android:text="ACCOUNT"
+            android:textColor="@color/health_text_secondary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
         <include
             android:id="@+id/rowChangePassword"
-            layout="@layout/item_setting_row"/>
+            layout="@layout/item_setting_row" />
 
         <include
             android:id="@+id/rowMedical"
-            layout="@layout/item_setting_row"/>
+            layout="@layout/item_setting_row" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="8dp"
+            android:letterSpacing="0.08"
+            android:text="MEDICAL"
+            android:textColor="@color/health_text_secondary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <include
+            android:id="@+id/rowCareActivity"
+            layout="@layout/item_setting_row" />
+
+        <include
+            android:id="@+id/rowHealthRecords"
+            layout="@layout/item_setting_row" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="8dp"
+            android:letterSpacing="0.08"
+            android:text="EMERGENCY"
+            android:textColor="@color/health_text_secondary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
         <include
             android:id="@+id/rowEmergency"
-            layout="@layout/item_setting_row"/>
+            layout="@layout/item_setting_row" />
 
-        <!-- MEDICAL -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="MEDICAL"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:letterSpacing="0.1"
-            android:layout_marginBottom="8dp"
-            android:textColor="@color/health_text_secondary"/>
-
-        <include layout="@layout/item_setting_row"/>
-        <include layout="@layout/item_setting_row"/>
-
-        <!-- EMERGENCY -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="EMERGENCY"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:letterSpacing="0.1"
-            android:layout_marginBottom="8dp"
-            android:textColor="@color/health_text_secondary"/>
-
-        <include layout="@layout/item_setting_row"/>
-        <include layout="@layout/item_setting_row"/>
-
-        <!-- LOGOUT -->
         <TextView
             android:id="@+id/rowLogout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="24dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
             android:padding="8dp"
             android:text="LOGOUT"
             android:textColor="@color/red"
-            android:textStyle="bold"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"/>
-
-
+            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>
