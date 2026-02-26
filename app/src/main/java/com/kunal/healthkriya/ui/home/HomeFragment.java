@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.model.home.HomeDataModel;
@@ -82,13 +83,18 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
         cardMedicine.setOnClickListener(v -> openReminderPage());
-        cardDonate.setOnClickListener(v -> showTemp("Donate / Request"));
+        cardDonate.setOnClickListener(v -> openDonationPage());
         cardEmergency.setOnClickListener(v -> showTemp("Emergency"));
     }
 
     private void openReminderPage() {
         Intent intent = new Intent(requireContext(), MedicineReminderActivity.class);
         startActivity(intent);
+    }
+
+    private void openDonationPage() {
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_homeFragment_to_donationFragment);
     }
 
     private void setupScrollListener() {

@@ -58,7 +58,11 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.kunal.healthkriya.ui.home.HomeFragment"
-        android:label="Home" />
+        android:label="Home">
+        <action
+            android:id="@+id/action_homeFragment_to_donationFragment"
+            app:destination="@id/donationFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/myHealthFragment"
@@ -78,6 +82,53 @@
         android:id="@+id/addReminderFragment"
         android:name="com.kunal.healthkriya.ui.reminder.AddMedicineFragment"
         android:label="Add Reminder" />
+
+    <fragment
+        android:id="@+id/donationFragment"
+        android:name="com.kunal.healthkriya.ui.donation.DonationFragment"
+        android:label="Donation">
+        <action
+            android:id="@+id/action_donationFragment_to_donationOptionFragment"
+            app:destination="@id/donationOptionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/donationOptionFragment"
+        android:name="com.kunal.healthkriya.ui.donation.DonationOptionFragment"
+        android:label="Donation Option">
+        <action
+            android:id="@+id/action_donationOptionFragment_to_bloodDonateFragment"
+            app:destination="@id/bloodDonateFragment" />
+        <action
+            android:id="@+id/action_donationOptionFragment_to_bloodRequestFragment"
+            app:destination="@id/bloodRequestFragment" />
+        <action
+            android:id="@+id/action_donationOptionFragment_to_medicineDonateFragment"
+            app:destination="@id/medicineDonateFragment" />
+        <action
+            android:id="@+id/action_donationOptionFragment_to_medicineRequestFragment"
+            app:destination="@id/medicineRequestFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/bloodDonateFragment"
+        android:name="com.kunal.healthkriya.ui.donation.BloodDonateFragment"
+        android:label="Blood Donate" />
+
+    <fragment
+        android:id="@+id/bloodRequestFragment"
+        android:name="com.kunal.healthkriya.ui.donation.BloodRequestFragment"
+        android:label="Blood Request" />
+
+    <fragment
+        android:id="@+id/medicineDonateFragment"
+        android:name="com.kunal.healthkriya.ui.donation.MedicineDonateFragment"
+        android:label="Medicine Donate" />
+
+    <fragment
+        android:id="@+id/medicineRequestFragment"
+        android:name="com.kunal.healthkriya.ui.donation.MedicineRequestFragment"
+        android:label="Medicine Request" />
 
     <fragment
         android:id="@+id/profileFragment"
