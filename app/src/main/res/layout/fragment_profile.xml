@@ -95,10 +95,6 @@
             android:textStyle="bold" />
 
         <include
-            android:id="@+id/rowCareActivity"
-            layout="@layout/item_setting_row" />
-
-        <include
             android:id="@+id/rowHealthRecords"
             layout="@layout/item_setting_row" />
 

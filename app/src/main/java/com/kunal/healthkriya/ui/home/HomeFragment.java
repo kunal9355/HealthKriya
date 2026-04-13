@@ -13,14 +13,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.model.home.HomeDataModel;
-import com.kunal.healthkriya.ui.mood.MoodContainerActivity;
 import com.kunal.healthkriya.ui.mood.MoodHubActivity;
 import com.kunal.healthkriya.ui.reminder.MedicineReminderActivity;
 
@@ -83,7 +80,7 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
         cardMedicine.setOnClickListener(v -> openReminderPage());
-        cardDonate.setOnClickListener(v -> openDonationPage());
+        cardDonate.setOnClickListener(v -> showDonationPlaceholder());
         cardEmergency.setOnClickListener(v -> showTemp("Emergency"));
     }
 
@@ -92,9 +89,12 @@ public class HomeFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void openDonationPage() {
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_homeFragment_to_donationFragment);
+    private void showDonationPlaceholder() {
+        Toast.makeText(
+                requireContext(),
+                "Donation module rebuild in progress",
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void setupScrollListener() {

@@ -32,7 +32,6 @@ public class ProfileFragment extends Fragment {
 
     private View rowChangePassword;
     private View rowMedical;
-    private View rowCareActivity;
     private View rowHealthRecords;
     private View rowEmergency;
     private View rowLogout;
@@ -60,7 +59,6 @@ public class ProfileFragment extends Fragment {
 
         rowChangePassword = view.findViewById(R.id.rowChangePassword);
         rowMedical = view.findViewById(R.id.rowMedical);
-        rowCareActivity = view.findViewById(R.id.rowCareActivity);
         rowHealthRecords = view.findViewById(R.id.rowHealthRecords);
         rowEmergency = view.findViewById(R.id.rowEmergency);
         rowLogout = view.findViewById(R.id.rowLogout);
@@ -83,12 +81,6 @@ public class ProfileFragment extends Fragment {
                 R.drawable.ic_health,
                 "Health form",
                 "Update your basic health profile"
-        );
-        configureSettingRow(
-                rowCareActivity,
-                R.drawable.ic_donate,
-                "Care Activity",
-                "View blood and medicine donate/request entries"
         );
         configureSettingRow(
                 rowHealthRecords,
@@ -127,11 +119,6 @@ public class ProfileFragment extends Fragment {
         rowMedical.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.myHealthFragment)
-        );
-
-        rowCareActivity.setOnClickListener(v ->
-                NavHostFragment.findNavController(this)
-                        .navigate(R.id.action_profile_to_careActivity)
         );
 
         rowHealthRecords.setOnClickListener(v ->
