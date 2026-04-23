@@ -6,13 +6,17 @@ import android.view.animation.AnimationUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.kunal.healthkriya.data.repository.AppRepository;
 import com.kunal.healthkriya.core.WindowInsetUtils;
 
 public class MainActivity extends AppCompatActivity {
+
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
                         .findFragmentById(R.id.nav_host_fragment);
 
         if (navHostFragment != null) {
-            NavController navController = navHostFragment.getNavController();
+            navController = navHostFragment.getNavController();
 
             BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
             NavigationUI.setupWithNavController(bottomNav, navController);
@@ -56,5 +60,41 @@ public class MainActivity extends AppCompatActivity {
                 bottomNav.setVisibility(showBottomNav ? View.VISIBLE : View.GONE);
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        validateActiveSession();
+    }
+
+    private void validateActiveSession() {
+        AppRepository repository = AppRepository.getInstance();
+        if (!repository.isFirebaseLoggedIn()) {
+            return;
+        }
+
+        repository.validateAuthSession(validSession -> {
+            if (!validSession) {
+                runOnUiThread(this::navigateToAuthRoot);
+            }
+        });
+    }
+
+    private void navigateToAuthRoot() {
+        if (navController == null) {
+            return;
+        }
+        if (navController.getCurrentDestination() == null) {
+            return;
+        }
+        if (navController.getCurrentDestination().getId() == R.id.authFragment) {
+            return;
+        }
+
+        NavOptions options = new NavOptions.Builder()
+                .setPopUpTo(R.id.nav_graph, true)
+                .build();
+        navController.navigate(R.id.authFragment, null, options);
     }
 }

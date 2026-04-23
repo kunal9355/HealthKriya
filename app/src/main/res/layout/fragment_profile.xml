@@ -126,5 +126,18 @@
             android:textColor="@color/red"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/rowDeleteAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:text="DELETE ACCOUNT"
+            android:textColor="@color/red"
+            android:textStyle="bold" />
+
     </LinearLayout>
 </ScrollView>

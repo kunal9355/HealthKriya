@@ -348,6 +348,18 @@ public class ReminderRepository {
         }
     }
 
+    public void clearLocalData() {
+        EXECUTOR.execute(() -> {
+            List<ReminderEntity> reminders = reminderDao.getNotDeletedReminders();
+            for (ReminderEntity reminder : reminders) {
+                AlarmScheduler.cancelReminder(appContext, reminder.clientId);
+            }
+            reminderDao.deleteAll();
+            reminderLogDao.clearAll();
+            notifyReminderChanged();
+        });
+    }
+
     private void syncPendingReminders() {
         List<ReminderEntity> pending = reminderDao.getBySyncStatus(ReminderEntity.SYNC_PENDING);
         for (ReminderEntity reminder : pending) {
@@ -406,6 +418,9 @@ public class ReminderRepository {
     private void mergeIncoming(ReminderEntity incoming) {
         ReminderEntity local = reminderDao.getByClientId(incoming.clientId);
         if (local == null || incoming.updatedAt >= local.updatedAt) {
+            if (local != null) {
+                incoming.id = local.id;
+            }
             reminderDao.insertOrUpdate(incoming);
 
             if (incoming.deleted || !incoming.active) {

@@ -45,4 +45,7 @@ public interface MoodDao {
 
     @Query("SELECT * FROM mood_table WHERE deleted = 0 ORDER BY date DESC")
     List<MoodEntity> getActiveMoods();
+
+    @Query("DELETE FROM mood_table")
+    void clearAll();
 }

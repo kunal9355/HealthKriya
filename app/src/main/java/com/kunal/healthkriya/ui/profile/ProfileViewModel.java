@@ -17,4 +17,16 @@ public class ProfileViewModel extends ViewModel {
     public void logout() {
         repository.logout();
     }
+
+    public void deleteAccount(String currentPassword, DeleteAccountCallback callback) {
+        repository.deleteAccount(currentPassword, (success, message) -> {
+            if (callback != null) {
+                callback.onComplete(success, message);
+            }
+        });
+    }
+
+    public interface DeleteAccountCallback {
+        void onComplete(boolean success, String message);
+    }
 }

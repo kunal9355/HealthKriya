@@ -58,7 +58,11 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.kunal.healthkriya.ui.home.HomeFragment"
-        android:label="Home" />
+        android:label="Home">
+        <action
+            android:id="@+id/action_homeFragment_to_donationFragment"
+            app:destination="@id/donationFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/myHealthFragment"
@@ -78,6 +82,56 @@
         android:id="@+id/addReminderFragment"
         android:name="com.kunal.healthkriya.ui.reminder.AddMedicineFragment"
         android:label="Add Reminder" />
+
+    <fragment
+        android:id="@+id/donationFragment"
+        android:name="com.kunal.healthkriya.ui.donation.DonationFragment"
+        android:label="Donation Dashboard">
+        <action
+            android:id="@+id/action_donationFragment_to_donationFormFragment"
+            app:destination="@id/donationFormFragment" />
+        <action
+            android:id="@+id/action_donationFragment_to_donationDetailFragment"
+            app:destination="@id/donationDetailFragment" />
+        <action
+            android:id="@+id/action_donationFragment_to_publicHelpFeedFragment"
+            app:destination="@id/publicHelpFeedFragment" />
+        <action
+            android:id="@+id/action_donationFragment_to_myDonationsFragment"
+            app:destination="@id/myDonationsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/donationFormFragment"
+        android:name="com.kunal.healthkriya.ui.donation.DonationFormFragment"
+        android:label="Donation Form" />
+
+    <fragment
+        android:id="@+id/donationDetailFragment"
+        android:name="com.kunal.healthkriya.ui.donation.DonationDetailFragment"
+        android:label="Donation Detail">
+        <action
+            android:id="@+id/action_donationDetailFragment_to_donationFormFragment"
+            app:destination="@id/donationFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/publicHelpFeedFragment"
+        android:name="com.kunal.healthkriya.ui.donation.PublicHelpFeedFragment"
+        android:label="Public Feed">
+        <action
+            android:id="@+id/action_publicHelpFeedFragment_to_donationDetailFragment"
+            app:destination="@id/donationDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myDonationsFragment"
+        android:name="com.kunal.healthkriya.ui.donation.MyDonationsFragment"
+        android:label="My Donations">
+        <action
+            android:id="@+id/action_myDonationsFragment_to_donationDetailFragment"
+            app:destination="@id/donationDetailFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/profileFragment"

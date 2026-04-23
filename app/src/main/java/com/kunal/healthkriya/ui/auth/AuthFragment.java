@@ -131,7 +131,8 @@ public class AuthFragment extends Fragment {
 
                 case USER_EXISTS:
                     Toast.makeText(requireContext(),
-                            "Account already exists. Please login.",
+                            valueOrFallback(viewModel.getAuthMessage().getValue(),
+                                    "Account already exists. Please login."),
                             Toast.LENGTH_LONG).show();
                     isLoginMode = true;
                     updateUI();
@@ -140,7 +141,8 @@ public class AuthFragment extends Fragment {
 
                 case ERROR:
                     Toast.makeText(requireContext(),
-                            "Authentication failed",
+                            valueOrFallback(viewModel.getAuthMessage().getValue(),
+                                    "Authentication failed"),
                             Toast.LENGTH_SHORT).show();
                     viewModel.clearAuthState();
                     break;
@@ -214,6 +216,10 @@ public class AuthFragment extends Fragment {
             if (phoneInputLayout != null) phoneInputLayout.setVisibility(View.VISIBLE);
             if (txtForgot != null) txtForgot.setVisibility(View.GONE);
         }
+    }
+
+    private String valueOrFallback(String value, String fallback) {
+        return value != null && !value.trim().isEmpty() ? value : fallback;
     }
 
 }

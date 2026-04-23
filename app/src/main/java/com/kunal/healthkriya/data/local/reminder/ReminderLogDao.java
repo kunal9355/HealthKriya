@@ -21,4 +21,7 @@ public interface ReminderLogDao {
 
     @Query("DELETE FROM reminder_log_table WHERE reminderClientId = :clientId")
     void deleteByReminder(String clientId);
+
+    @Query("DELETE FROM reminder_log_table")
+    void clearAll();
 }

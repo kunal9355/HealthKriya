@@ -27,4 +27,7 @@ public interface ReminderDao {
 
     @Query("SELECT * FROM reminder_table WHERE syncStatus = :syncStatus AND deleted = 0")
     List<ReminderEntity> getBySyncStatus(int syncStatus);
+
+    @Query("DELETE FROM reminder_table")
+    void deleteAll();
 }

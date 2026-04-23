@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.kunal.healthkriya.data.helper.NotificationHelper;
+import com.kunal.healthkriya.data.repository.AppRepository;
+import com.kunal.healthkriya.data.repository.DonationRepository;
 import com.kunal.healthkriya.data.repository.MoodRepository;
 import com.kunal.healthkriya.data.repository.ReminderRepository;
 
@@ -39,19 +42,31 @@ public class HealthKriyaApp extends Application {
                 isDark ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
         );
 
-        // Sync mood + reminder data when auth user is available (works for login-after-launch flow too)
+        NotificationHelper.initialize(this);
+
+        // Sync mood + reminder + donation data when auth user is available.
+        DonationRepository donationRepository = new DonationRepository(this);
         MoodRepository moodRepository = new MoodRepository(this);
         ReminderRepository reminderRepository = new ReminderRepository(this);
         FirebaseAuth.getInstance().addAuthStateListener(auth -> {
             String uid = auth.getUid();
             if (uid == null) {
                 lastSyncedUid = null;
+                donationRepository.stopRealtimeSync();
                 reminderRepository.stopRealtimeSync();
                 moodRepository.stopRealtimeSync();
+                AppRepository.getInstance().clearSessionState();
+                donationRepository.clearLocalData();
+                reminderRepository.clearLocalData();
+                moodRepository.clearLocalData();
+                
+                // Still allow public feed for guest users
+                donationRepository.restoreFromFirebase();
                 return;
             }
             if (!uid.equals(lastSyncedUid)) {
                 lastSyncedUid = uid;
+                donationRepository.restoreFromFirebase();
                 moodRepository.restoreFromFirebase();
                 reminderRepository.restoreFromFirebase();
             }

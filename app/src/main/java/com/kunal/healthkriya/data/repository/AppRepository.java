@@ -2,9 +2,11 @@ package com.kunal.healthkriya.data.repository;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.kunal.healthkriya.core.AppState;
 import com.kunal.healthkriya.data.model.UserModel;
+import com.kunal.healthkriya.data.model.auth.AuthResult;
 import com.kunal.healthkriya.data.source.FirebaseSource;
 import com.kunal.healthkriya.data.source.LocalSource;
 
@@ -29,12 +31,35 @@ public class AppRepository {
     }
 
     // ---------- AUTH ----------
-    public LiveData<UserModel> login(String email, String password) {
-        return firebase.login(email, password);
+    public LiveData<AuthResult> login(String email, String password) {
+        return Transformations.map(firebase.login(email, password), user -> {
+            if (user != null) {
+                return AuthResult.success(user);
+            } else {
+                return AuthResult.error("auth_failed", "Invalid email or password");
+            }
+        });
     }
 
-    public LiveData<UserModel> register(String email, String password) {
-        return firebase.register(email, password);
+    public LiveData<AuthResult> register(String email, String password) {
+        return Transformations.map(firebase.register(email, password, ""), user -> {
+            if (user != null) {
+                return AuthResult.success(user);
+            } else {
+                return AuthResult.error("registration_failed", "Unable to create account");
+            }
+        });
+    }
+
+    public void validateAuthSession(SessionCallback callback) {
+        firebase.validateCurrentSession(valid -> {
+            if (!valid) {
+                clearSessionState();
+            }
+            if (callback != null) {
+                callback.onResult(valid);
+            }
+        });
     }
 
     public boolean isFirebaseLoggedIn() {
@@ -68,9 +93,24 @@ public class AppRepository {
     // ---------- LOGOUT ----------
     public void logout() {
         firebase.logout();
+        clearSessionState();
+    }
+
+    public void clearSessionState() {
         local.clearUser();
         AppState.getInstance().setCurrentUser(null);
         currentUserLive.postValue(null);
+    }
+
+    public void deleteAccount(String currentPassword, ActionCallback callback) {
+        firebase.deleteCurrentUser(currentPassword, (success, message) -> {
+            if (success) {
+                clearSessionState();
+            }
+            if (callback != null) {
+                callback.onComplete(success, message);
+            }
+        });
     }
 
     public MutableLiveData<Boolean> verifyEmailPhone(String email, String phone) {
@@ -103,5 +143,13 @@ public class AppRepository {
                 });
 
         return result;
+    }
+
+    public interface SessionCallback {
+        void onResult(boolean validSession);
+    }
+
+    public interface ActionCallback {
+        void onComplete(boolean success, String message);
     }
 }

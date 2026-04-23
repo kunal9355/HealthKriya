@@ -9,23 +9,38 @@ public class SplashViewModel extends ViewModel {
     public enum Destination {
         ONBOARDING,
         AUTH,
-        HOME   // future
+        HOME
     }
 
     private final AppRepository repository = AppRepository.getInstance();
 
-    public Destination decideNext() {
-
-        // Case 1: Firebase user exists → logged in
+    public void decideNext(DestinationCallback callback) {
+        // First check if firebase thinks we are logged in
         if (repository.isFirebaseLoggedIn()) {
-            return Destination.HOME; // future: HomeFragment
-        }
-
-        // Case 2: Not logged in
-        if (repository.isOnboardingSeen()) {
-            return Destination.AUTH;
+            // Validate the session in background to be sure
+            repository.validateAuthSession(validSession -> {
+                if (validSession) {
+                    callback.onResult(Destination.HOME);
+                } else {
+                    // Session expired or invalid, go to Auth
+                    checkOnboarding(callback);
+                }
+            });
         } else {
-            return Destination.ONBOARDING;
+            // Not logged in at all
+            checkOnboarding(callback);
         }
+    }
+
+    private void checkOnboarding(DestinationCallback callback) {
+        if (repository.isOnboardingSeen()) {
+            callback.onResult(Destination.AUTH);
+        } else {
+            callback.onResult(Destination.ONBOARDING);
+        }
+    }
+
+    public interface DestinationCallback {
+        void onResult(Destination destination);
     }
 }

@@ -21,7 +21,7 @@ public class SplashFragment extends Fragment {
 
     private SplashViewModel viewModel;
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private final Runnable navigateRunnable = this::navigateNext;
+    private boolean isNavigated = false;
 
     @Nullable
     @Override
@@ -40,19 +40,12 @@ public class SplashFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(SplashViewModel.class);
         startLogoAnimation(view);
 
-        handler.postDelayed(navigateRunnable, 1500);
-    }
-
-    @Override
-    public void onDestroyView() {
-        handler.removeCallbacks(navigateRunnable);
-        super.onDestroyView();
+        // Delay navigation slightly to show splash animation
+        handler.postDelayed(this::navigateNext, 1800);
     }
 
     private void navigateNext() {
-        if (!isAdded()) {
-            return;
-        }
+        if (!isAdded() || isNavigated) return;
 
         NavController navController = NavHostFragment.findNavController(this);
         if (navController.getCurrentDestination() == null
@@ -60,34 +53,40 @@ public class SplashFragment extends Fragment {
             return;
         }
 
-        SplashViewModel.Destination dest = viewModel.decideNext();
+        viewModel.decideNext(dest -> {
+            if (!isAdded() || isNavigated) return;
+            isNavigated = true;
 
-        if (dest == SplashViewModel.Destination.HOME) {
-            navController.navigate(R.id.action_splashFragment_to_homeFragment);
-        } else if (dest == SplashViewModel.Destination.AUTH) {
-            navController.navigate(R.id.action_splashFragment_to_authFragment);
-        } else {
-            navController.navigate(R.id.action_splashFragment_to_onboardingFragment);
-        }
+            NavController currentController = NavHostFragment.findNavController(this);
+            if (dest == SplashViewModel.Destination.HOME) {
+                currentController.navigate(R.id.action_splashFragment_to_homeFragment);
+            } else if (dest == SplashViewModel.Destination.AUTH) {
+                currentController.navigate(R.id.action_splashFragment_to_authFragment);
+            } else {
+                currentController.navigate(R.id.action_splashFragment_to_onboardingFragment);
+            }
+        });
     }
 
     private void startLogoAnimation(@NonNull View rootView) {
         View logo = rootView.findViewById(R.id.imgLogo);
         if (logo == null) return;
 
-        float travelY = 18f * rootView.getResources().getDisplayMetrics().density;
         logo.setAlpha(0f);
-        logo.setScaleX(0.92f);
-        logo.setScaleY(0.92f);
-        logo.setTranslationY(travelY);
+        logo.setScaleX(0.85f);
+        logo.setScaleY(0.85f);
         logo.animate()
                 .alpha(1f)
                 .scaleX(1f)
                 .scaleY(1f)
-                .translationY(0f)
-                .setDuration(900L)
-                .setStartDelay(80L)
+                .setDuration(1000L)
                 .setInterpolator(new DecelerateInterpolator())
                 .start();
+    }
+
+    @Override
+    public void onDestroyView() {
+        handler.removeCallbacksAndMessages(null);
+        super.onDestroyView();
     }
 }

@@ -130,6 +130,10 @@ public class MoodRepository {
         }
     }
 
+    public void clearLocalData() {
+        EXECUTOR.execute(moodDao::clearAll);
+    }
+
     private void resolveConflict(MoodEntity incoming) {
         MoodEntity local = moodDao.getMoodByDateSync(incoming.date);
 

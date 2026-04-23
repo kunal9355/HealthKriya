@@ -3,15 +3,19 @@ package com.kunal.healthkriya.ui.profile;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,6 +39,7 @@ public class ProfileFragment extends Fragment {
     private View rowHealthRecords;
     private View rowEmergency;
     private View rowLogout;
+    private View rowDeleteAccount;
 
     @Nullable
     @Override
@@ -62,6 +67,7 @@ public class ProfileFragment extends Fragment {
         rowHealthRecords = view.findViewById(R.id.rowHealthRecords);
         rowEmergency = view.findViewById(R.id.rowEmergency);
         rowLogout = view.findViewById(R.id.rowLogout);
+        rowDeleteAccount = view.findViewById(R.id.rowDeleteAccount);
 
         setupRowLabels();
         observeUser();
@@ -133,12 +139,10 @@ public class ProfileFragment extends Fragment {
 
         rowLogout.setOnClickListener(v -> {
             viewModel.logout();
-            NavController navController = NavHostFragment.findNavController(this);
-            NavOptions options = new NavOptions.Builder()
-                    .setPopUpTo(R.id.nav_graph, true)
-                    .build();
-            navController.navigate(R.id.authFragment, null, options);
+            navigateToAuth();
         });
+
+        rowDeleteAccount.setOnClickListener(v -> showDeleteAccountDialog());
     }
 
     private void setupThemeSwitch() {
@@ -169,5 +173,56 @@ public class ProfileFragment extends Fragment {
         icon.setImageResource(iconRes);
         txtTitle.setText(title);
         txtSubtitle.setText(subtitle);
+    }
+
+    private void showDeleteAccountDialog() {
+        if (getContext() == null) {
+            return;
+        }
+
+        EditText passwordInput = new EditText(requireContext());
+        passwordInput.setHint("Current password");
+        passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete account permanently?")
+                .setMessage("This will delete your Auth account and Firestore data.")
+                .setView(passwordInput)
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    String password = passwordInput.getText() != null
+                            ? passwordInput.getText().toString().trim()
+                            : "";
+                    if (password.isEmpty()) {
+                        Toast.makeText(requireContext(), "Enter current password", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    performAccountDelete(password);
+                })
+                .show();
+    }
+
+    private void performAccountDelete(String currentPassword) {
+        viewModel.deleteAccount(currentPassword, (success, message) -> {
+            if (!isAdded()) {
+                return;
+            }
+
+            if (success) {
+                Toast.makeText(requireContext(), "Account deleted successfully", Toast.LENGTH_LONG).show();
+                navigateToAuth();
+                return;
+            }
+
+            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void navigateToAuth() {
+        NavController navController = NavHostFragment.findNavController(this);
+        NavOptions options = new NavOptions.Builder()
+                .setPopUpTo(R.id.nav_graph, true)
+                .build();
+        navController.navigate(R.id.authFragment, null, options);
     }
 }

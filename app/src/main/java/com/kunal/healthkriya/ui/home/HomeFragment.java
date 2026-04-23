@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.kunal.healthkriya.R;
 import com.kunal.healthkriya.data.model.home.HomeDataModel;
@@ -80,7 +81,7 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
         cardMedicine.setOnClickListener(v -> openReminderPage());
-        cardDonate.setOnClickListener(v -> showDonationPlaceholder());
+        cardDonate.setOnClickListener(v -> openDonationPage());
         cardEmergency.setOnClickListener(v -> showTemp("Emergency"));
     }
 
@@ -89,12 +90,9 @@ public class HomeFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void showDonationPlaceholder() {
-        Toast.makeText(
-                requireContext(),
-                "Donation module rebuild in progress",
-                Toast.LENGTH_SHORT
-        ).show();
+    private void openDonationPage() {
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_homeFragment_to_donationFragment);
     }
 
     private void setupScrollListener() {
