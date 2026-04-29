@@ -10,11 +10,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,10 +32,13 @@ public class FirebaseSource {
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private volatile String lastAuthErrorCode = "auth_failed";
+    private volatile String lastAuthErrorMessage = "Authentication failed";
 
     // LOGIN
     public LiveData<UserModel> login(String email, String password) {
         MutableLiveData<UserModel> liveData = new MutableLiveData<>();
+        clearLastAuthError();
 
         auth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
@@ -45,6 +51,7 @@ public class FirebaseSource {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Login failed: " + e.getMessage());
+                    setLastAuthError(parseAuthErrorCode(e), parseAuthErrorMessage(e, true));
                     liveData.postValue(null);
                 });
 
@@ -54,6 +61,7 @@ public class FirebaseSource {
     // REGISTER - Updated to include phone
     public LiveData<UserModel> register(String email, String password, String phone) {
         MutableLiveData<UserModel> liveData = new MutableLiveData<>();
+        clearLastAuthError();
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
@@ -68,12 +76,13 @@ public class FirebaseSource {
                                 .addOnSuccessListener(v -> liveData.postValue(model))
                                 .addOnFailureListener(e -> {
                                     Log.e(TAG, "Firestore user creation failed: " + e.getMessage());
-                                    liveData.postValue(null);
+                                    liveData.postValue(model);
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Auth registration failed: " + e.getMessage());
+                    setLastAuthError(parseAuthErrorCode(e), parseAuthErrorMessage(e, false));
                     liveData.postValue(null);
                 });
 
@@ -220,6 +229,14 @@ public class FirebaseSource {
         return auth.getCurrentUser();
     }
 
+    public String getLastAuthErrorCode() {
+        return lastAuthErrorCode;
+    }
+
+    public String getLastAuthErrorMessage() {
+        return lastAuthErrorMessage;
+    }
+
     public void logout() {
         auth.signOut();
     }
@@ -274,6 +291,56 @@ public class FirebaseSource {
 
     private void postAction(ActionCallback callback, boolean success, String message) {
         if (callback != null) mainHandler.post(() -> callback.onComplete(success, message));
+    }
+
+    private void clearLastAuthError() {
+        lastAuthErrorCode = "auth_failed";
+        lastAuthErrorMessage = "Authentication failed";
+    }
+
+    private void setLastAuthError(String code, String message) {
+        lastAuthErrorCode = code;
+        lastAuthErrorMessage = message;
+    }
+
+    private String parseAuthErrorCode(Exception error) {
+        if (error instanceof FirebaseAuthUserCollisionException) {
+            return "user_exists";
+        }
+        if (error instanceof FirebaseAuthInvalidUserException) {
+            return "user_not_found";
+        }
+        if (error instanceof FirebaseAuthInvalidCredentialsException) {
+            return "invalid_credentials";
+        }
+        if (error instanceof FirebaseNetworkException) {
+            return "network_error";
+        }
+        if (error instanceof FirebaseTooManyRequestsException) {
+            return "too_many_requests";
+        }
+        return "auth_failed";
+    }
+
+    private String parseAuthErrorMessage(Exception error, boolean isLogin) {
+        if (error instanceof FirebaseAuthUserCollisionException) {
+            return "Account already exists. Please login.";
+        }
+        if (error instanceof FirebaseAuthInvalidUserException) {
+            return "No account found for this email.";
+        }
+        if (error instanceof FirebaseNetworkException) {
+            return "Network error. Please check your internet connection.";
+        }
+        if (error instanceof FirebaseTooManyRequestsException) {
+            return "Too many attempts. Please wait and try again.";
+        }
+
+        String message = error != null ? error.getMessage() : null;
+        if (!TextUtils.isEmpty(message)) {
+            return message;
+        }
+        return isLogin ? "Unable to login right now." : "Unable to create account right now.";
     }
 
     private String parseDeleteError(Exception error) {

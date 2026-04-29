@@ -99,6 +99,8 @@ public class DonationDetailFragment extends Fragment {
             currentDonation = item;
             render(item);
         });
+
+        repository.startRealtimeSync();
     }
 
     @Override
@@ -106,6 +108,9 @@ public class DonationDetailFragment extends Fragment {
         if (helpSubscription != null) {
             helpSubscription.cancel();
             helpSubscription = null;
+        }
+        if (repository != null) {
+            repository.stopRealtimeSync();
         }
         super.onDestroyView();
     }

@@ -72,6 +72,16 @@ public class MyDonationsFragment extends Fragment {
             }
             applyFilter();
         });
+
+        repository.startRealtimeSync();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (repository != null) {
+            repository.stopRealtimeSync();
+        }
     }
 
     private void selectFilter(Filter filter) {

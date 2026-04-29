@@ -36,7 +36,10 @@ public class AppRepository {
             if (user != null) {
                 return AuthResult.success(user);
             } else {
-                return AuthResult.error("auth_failed", "Invalid email or password");
+                return AuthResult.error(
+                        firebase.getLastAuthErrorCode(),
+                        firebase.getLastAuthErrorMessage()
+                );
             }
         });
     }
@@ -46,7 +49,10 @@ public class AppRepository {
             if (user != null) {
                 return AuthResult.success(user);
             } else {
-                return AuthResult.error("registration_failed", "Unable to create account");
+                return AuthResult.error(
+                        firebase.getLastAuthErrorCode(),
+                        firebase.getLastAuthErrorMessage()
+                );
             }
         });
     }

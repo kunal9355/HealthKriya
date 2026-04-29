@@ -20,6 +20,9 @@ public class HealthKriyaApp extends Application {
     private static final String TAG = "HealthKriyaApp";
     private static HealthKriyaApp instance;
     private String lastSyncedUid;
+    private DonationRepository donationRepository;
+    private MoodRepository moodRepository;
+    private ReminderRepository reminderRepository;
 
     @Override
     public void onCreate() {
@@ -45,9 +48,10 @@ public class HealthKriyaApp extends Application {
         NotificationHelper.initialize(this);
 
         // Sync mood + reminder + donation data when auth user is available.
-        DonationRepository donationRepository = new DonationRepository(this);
-        MoodRepository moodRepository = new MoodRepository(this);
-        ReminderRepository reminderRepository = new ReminderRepository(this);
+        donationRepository = new DonationRepository(this);
+        moodRepository = new MoodRepository(this);
+        reminderRepository = new ReminderRepository(this);
+
         FirebaseAuth.getInstance().addAuthStateListener(auth -> {
             String uid = auth.getUid();
             if (uid == null) {

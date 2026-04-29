@@ -107,8 +107,18 @@ public class DonationFragment extends Fragment {
                         .navigate(R.id.action_donationFragment_to_publicHelpFeedFragment));
 
         observeData();
+
+        repository.startRealtimeSync();
+
+
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        repository.stopRealtimeSync();
+    }
     private void observeData() {
         repository.getUserDonations().observe(getViewLifecycleOwner(), items -> {
             List<DonationEntity> preview = take(items, 6);

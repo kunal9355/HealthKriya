@@ -665,6 +665,8 @@ public class DonationRepository {
             return;
         }
 
+        android.util.Log.d("DonationRepository", "Merging incoming donation: " + incoming.clientId + " (status: " + incoming.status + ")");
+
         DonationEntity local = donationDao.getByClientIdSync(incoming.clientId);
         if (local != null && incoming.updatedAt < local.updatedAt) {
             return;

@@ -83,6 +83,14 @@ public class PublicHelpFeedFragment extends Fragment {
             }
             applyFilters();
         });
+
+        repository.startRealtimeSync();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        repository.stopRealtimeSync();
     }
 
     private void setupFilters() {
@@ -146,10 +154,10 @@ public class PublicHelpFeedFragment extends Fragment {
         boolean hasCritical = false;
 
         for (DonationEntity item : allItems) {
-            boolean isActive = DonationEntity.STATUS_ACTIVE.equals(item.status)
-                    || DonationEntity.STATUS_IN_PROGRESS.equals(item.status);
-
-            if (item.deleted || !item.isPublic || !isActive) {
+            if (!DonationEntity.ACTION_REQUEST.equals(item.action)
+                    || item.deleted
+                    || !item.isPublic
+                    || !DonationEntity.STATUS_ACTIVE.equals(item.status)) {
                 continue;
             }
             if (!"all".equals(selectedType) && !selectedType.equals(item.type)) {
