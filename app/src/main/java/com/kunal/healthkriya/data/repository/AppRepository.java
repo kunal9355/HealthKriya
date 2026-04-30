@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.kunal.healthkriya.core.AppState;
+import com.kunal.healthkriya.data.model.EmergencyCardModel;
 import com.kunal.healthkriya.data.model.UserModel;
 import com.kunal.healthkriya.data.model.auth.AuthResult;
 import com.kunal.healthkriya.data.source.FirebaseSource;
@@ -17,12 +18,14 @@ public class AppRepository {
     private final FirebaseSource firebase;
     private final LocalSource local;
     private final MutableLiveData<UserModel> currentUserLive = new MutableLiveData<>();
+    private final MutableLiveData<EmergencyCardModel> emergencyCardLive = new MutableLiveData<>();
 
     private AppRepository() {
         firebase = new FirebaseSource();
         local = new LocalSource();
         // Initialize with cached user
         currentUserLive.setValue(local.getUser());
+        emergencyCardLive.setValue(local.getEmergencyCard());
     }
 
     public static AppRepository getInstance() {
@@ -77,6 +80,7 @@ public class AppRepository {
         local.saveUser(user);
         AppState.getInstance().setCurrentUser(user);
         currentUserLive.postValue(user);
+        emergencyCardLive.postValue(local.getEmergencyCard());
     }
 
     public UserModel getCachedUser() {
@@ -85,6 +89,20 @@ public class AppRepository {
 
     public LiveData<UserModel> getCurrentUserLive() {
         return currentUserLive;
+    }
+
+    public LiveData<EmergencyCardModel> getEmergencyCardLive() {
+        return emergencyCardLive;
+    }
+
+    public EmergencyCardModel getEmergencyCard() {
+        EmergencyCardModel card = emergencyCardLive.getValue();
+        return card != null ? card : local.getEmergencyCard();
+    }
+
+    public void saveEmergencyCard(EmergencyCardModel card) {
+        local.saveEmergencyCard(card);
+        emergencyCardLive.postValue(local.getEmergencyCard());
     }
 
     // ---------- ONBOARDING ----------
@@ -106,6 +124,7 @@ public class AppRepository {
         local.clearUser();
         AppState.getInstance().setCurrentUser(null);
         currentUserLive.postValue(null);
+        emergencyCardLive.postValue(local.getEmergencyCard());
     }
 
     public void deleteAccount(String currentPassword, ActionCallback callback) {

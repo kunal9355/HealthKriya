@@ -13,7 +13,10 @@ public class UserModel implements Serializable {
     private String phone = "";
     private String age = "";
     private String gender = "";
+    private String bloodGroup = "";
+    private String emergencyContact = "";
     private String medicalConditions = "";
+    private String allergies = "";
 
     // Required empty constructor for Firestore
     public UserModel() {}
@@ -52,4 +55,13 @@ public class UserModel implements Serializable {
 
     public String getMedicalConditions() { return medicalConditions; }
     public void setMedicalConditions(String medicalConditions) { this.medicalConditions = medicalConditions; }
+
+    public String getBloodGroup() { return bloodGroup; }
+    public void setBloodGroup(String bloodGroup) { this.bloodGroup = bloodGroup; }
+
+    public String getEmergencyContact() { return emergencyContact; }
+    public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
+
+    public String getAllergies() { return allergies; }
+    public void setAllergies(String allergies) { this.allergies = allergies; }
 }

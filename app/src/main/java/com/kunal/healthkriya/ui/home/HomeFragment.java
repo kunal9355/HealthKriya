@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,15 +17,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.kunal.healthkriya.R;
+import com.kunal.healthkriya.data.model.EmergencyCardModel;
 import com.kunal.healthkriya.data.model.home.HomeDataModel;
+import com.kunal.healthkriya.ui.emergency.EmergencyViewModel;
 import com.kunal.healthkriya.ui.mood.MoodHubActivity;
 import com.kunal.healthkriya.ui.reminder.MedicineReminderActivity;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel viewModel;
+    private EmergencyViewModel emergencyViewModel;
 
     private TextView txtGreeting;
+    private TextView txtEmergencySubtitle;
     private View cardMood, cardMedicine, cardDonate, cardEmergency;
     private ScrollView homeScroll;
 
@@ -45,8 +48,10 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        emergencyViewModel = new ViewModelProvider(requireActivity()).get(EmergencyViewModel.class);
 
         txtGreeting = view.findViewById(R.id.txtGreeting);
+        txtEmergencySubtitle = view.findViewById(R.id.txtEmergencySubtitle);
         cardMood = view.findViewById(R.id.cardMood);
         cardMedicine = view.findViewById(R.id.cardMedicine);
         cardDonate = view.findViewById(R.id.cardDonate);
@@ -54,6 +59,7 @@ public class HomeFragment extends Fragment {
         homeScroll = view.findViewById(R.id.homeScroll);
 
         observeData();
+        observeEmergencyCard();
         setupClicks();
         setupScrollListener();
         
@@ -75,6 +81,15 @@ public class HomeFragment extends Fragment {
         txtGreeting.setText("Hi, " + name + " 👋");
     }
 
+    private void observeEmergencyCard() {
+        emergencyViewModel.getEmergencyCard().observe(getViewLifecycleOwner(), card -> {
+            if (txtEmergencySubtitle == null) {
+                return;
+            }
+            txtEmergencySubtitle.setText(buildEmergencySubtitle(card));
+        });
+    }
+
     private void setupClicks() {
         cardMood.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), MoodHubActivity.class);
@@ -82,7 +97,7 @@ public class HomeFragment extends Fragment {
         });
         cardMedicine.setOnClickListener(v -> openReminderPage());
         cardDonate.setOnClickListener(v -> openDonationPage());
-        cardEmergency.setOnClickListener(v -> showTemp("Emergency"));
+        cardEmergency.setOnClickListener(v -> openEmergencyPage());
     }
 
     private void openReminderPage() {
@@ -93,6 +108,11 @@ public class HomeFragment extends Fragment {
     private void openDonationPage() {
         NavHostFragment.findNavController(this)
                 .navigate(R.id.action_homeFragment_to_donationFragment);
+    }
+
+    private void openEmergencyPage() {
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_homeFragment_to_emergencyFragment);
     }
 
     private void setupScrollListener() {
@@ -116,8 +136,14 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void showTemp(String msg) {
-        Toast.makeText(requireContext(), msg + " clicked", Toast.LENGTH_SHORT).show();
+    private String buildEmergencySubtitle(EmergencyCardModel card) {
+        if (card == null || card.isEmpty()) {
+            return "Create your SOS card";
+        }
+        if (!card.getBloodGroup().isEmpty()) {
+            return "Ready • Blood " + card.getBloodGroup();
+        }
+        return "Emergency details saved";
     }
 
     private void attachCardAnimation(View card) {

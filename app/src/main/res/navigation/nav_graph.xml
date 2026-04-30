@@ -62,6 +62,9 @@
         <action
             android:id="@+id/action_homeFragment_to_donationFragment"
             app:destination="@id/donationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_emergencyFragment"
+            app:destination="@id/emergencyFragment" />
     </fragment>
 
     <fragment
@@ -166,6 +169,15 @@
     <fragment
         android:id="@+id/emergencyFragment"
         android:name="com.kunal.healthkriya.ui.emergency.EmergencyFragment"
-        android:label="Emergency" />
+        android:label="Emergency">
+        <action
+            android:id="@+id/action_emergencyFragment_to_emergencyFormFragment"
+            app:destination="@id/emergencyFormFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/emergencyFormFragment"
+        android:name="com.kunal.healthkriya.ui.emergency.EmergencyFormFragment"
+        android:label="Emergency Form" />
 
 </navigation>
